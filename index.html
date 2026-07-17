@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>어휘 수호대: 국어 타워 디펜스 2 (CSS Edition)</title>
+    <title>어휘 수호대: 국어 타워 디펜스 2 (CSS 완전판)</title>
     <style>
         :root {
             --primary: #5cdb95;
@@ -31,13 +31,7 @@
             overflow: hidden;
         }
 
-        /* 공통 네온 테두리 스타일 */
-        .neon-box {
-            border: 2px solid var(--primary);
-            box-shadow: var(--neon-shadow);
-        }
-
-        /* --- 1. 로비 / 맵 선택 화면 --- */
+        /* --- 1. 로비 / 지형 선택 화면 --- */
         .screen {
             display: none;
             width: 100%;
@@ -66,6 +60,8 @@
             border-radius: 24px;
             max-width: 650px;
             width: 90%;
+            border: 2px solid var(--primary);
+            box-shadow: var(--neon-shadow);
         }
 
         h1 {
@@ -160,7 +156,7 @@
             to { opacity: 1; transform: scale(1.05); }
         }
 
-        /* 중간 게임 판 및 상점 */
+        /* 중간 게임 영역 */
         .game-main {
             display: grid;
             grid-template-columns: 1fr 240px;
@@ -177,7 +173,7 @@
             overflow: hidden;
         }
 
-        /* 💻 CSS 맵 격자판 (Grid 구조) */
+        /* CSS 맵 격자판 */
         #game-board {
             display: grid;
             grid-template-columns: repeat(16, var(--tile-size));
@@ -190,7 +186,7 @@
             box-shadow: 0 8px 25px rgba(0,0,0,0.6);
         }
 
-        /* 기본 타일 스타일 (북유럽풍 예쁜 그라데이션 잔디) */
+        /* 기본 타일 스타일 (잔디 그라데이션) */
         .tile {
             width: var(--tile-size);
             height: var(--tile-size);
@@ -200,16 +196,17 @@
             align-items: center;
             font-size: 1.2rem;
             position: relative;
-            transition: background-color 0.2s;
+            cursor: pointer;
         }
 
-        /* 입체감 있는 황토색 오솔길 */
+        /* 입체감 있는 흙길 */
         .tile.path-tile {
             background: linear-gradient(135deg, #e9cc8b, #dfbf73);
             box-shadow: inset 0 0 8px rgba(0,0,0,0.15);
+            cursor: not-allowed;
         }
 
-        /* 타워 배치 범위 원 (네온 마법진 연출) */
+        /* 사정거리 표시 링 */
         .range-indicator {
             position: absolute;
             border-radius: 50%;
@@ -222,8 +219,7 @@
             display: none;
         }
 
-        /* --- 3. 타워 & 몬스터 & 애니메이션 객체 구성 --- */
-        /* 세련된 마법진 모양 타워 */
+        /* --- 3. 타워 & 몬스터 & 투사체 디자인 --- */
         .tower-obj {
             width: 40px;
             height: 40px;
@@ -238,7 +234,6 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.4), inset 0 0 6px rgba(255,255,255,0.4);
             border: 2px solid #fff;
             transform: translate(-50%, -50%);
-            transition: border-color 0.2s;
         }
 
         .tower-obj.max-level {
@@ -246,7 +241,6 @@
             box-shadow: 0 0 12px #ffd700;
         }
 
-        /* 타워 발사 모션 둠칫 애니메이션 */
         @keyframes tower-shoot {
             0% { transform: translate(-50%, -50%) scale(1); }
             30% { transform: translate(-50%, -50%) scale(1.3); }
@@ -268,7 +262,7 @@
             border-radius: 4px;
         }
 
-        /* 귀여운 요괴 몬스터 (CSS Absolute 무빙) */
+        /* 요괴 캐릭터 */
         .monster-obj {
             position: absolute;
             width: 38px;
@@ -279,9 +273,8 @@
             font-size: 1.7rem;
             z-index: 7;
             transform: translate(-50%, -50%);
-            transition: left 0.1s linear, top 0.1s linear;
-            /* 둥실둥실 춤추는 애니메이션 탑재 */
             animation: monster-bounce 0.5s infinite alternate ease-in-out;
+            pointer-events: none;
         }
 
         @keyframes monster-bounce {
@@ -317,7 +310,6 @@
             white-space: nowrap;
         }
 
-        /* CSS 비주얼 투사체 */
         .projectile-obj {
             position: absolute;
             width: 8px;
@@ -326,9 +318,9 @@
             z-index: 8;
             transform: translate(-50%, -50%);
             box-shadow: 0 0 6px rgba(255,255,255,0.8);
+            pointer-events: none;
         }
 
-        /* 💥 펑 터지는 타격감 이펙트 애니메이션 */
         .hit-effect {
             position: absolute;
             font-size: 1.8rem;
@@ -343,7 +335,7 @@
             100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; }
         }
 
-        /* --- 4. 우측 상점 및 하단 퀴즈창 UI 개편 --- */
+        /* --- 4. 우측 상점 및 하단 퀴즈 UI --- */
         .sidebar {
             background: var(--bg-dark);
             border-left: 3px solid #2d3250;
@@ -440,7 +432,6 @@
             gap: 10px;
         }
 
-        /* 야광 테두리가 도는 하단 세련된 퀴즈창 */
         .quiz-area {
             background: var(--bg-dark);
             border-top: 4px solid var(--primary);
@@ -501,7 +492,7 @@
         }
         .option-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* 오버레이 팝업 */
+        /* 모달 팝업 */
         .overlay {
             display: none;
             position: absolute;
@@ -531,7 +522,7 @@
 </head>
 <body>
 
-    <!-- 1. 로비 / 지형 선택 대문 -->
+    <!-- 1. 로비 / 대문 화면 -->
     <div id="lobby-screen" class="screen active">
         <div class="lobby-container">
             <h1>어휘 수호대 2</h1>
@@ -540,13 +531,13 @@
             <div class="map-selection">
                 <button class="map-btn" onclick="startGame(0)">초록 잔디 평원 (쉬움) <span>길게 굽어가는 평화로운 오솔길 코스</span></button>
                 <button class="map-btn" onclick="startGame(1)">S자 계곡로 (보통) <span>숲속을 유연하게 가로지르는 리드미컬 코스</span></button>
-                <button class="map-btn" onclick="startGame(2)">어휘 나선 소용돌이 (어려움) <span>빙글빙글 뱅글뱅글 중심부 마법진 미로 코스</span></button>
-                <button class="map-btn" onclick="startGame(3)">요괴의 정면돌진로 (지옥) <span>성벽까지 단숨에 내달리는 초단거리 긴장 코스</span></button>
+                <button class="map-btn" onclick="startGame(2)">어휘 나선 소용돌이 (어려움) <span>중심부 마법진 미로 코스</span></button>
+                <button class="map-btn" onclick="startGame(3)">요괴의 정면돌진로 (지옥) <span>초단거리 긴장 코스</span></button>
             </div>
         </div>
     </div>
 
-    <!-- 2. 메인 게임 시뮬레이터 구성 -->
+    <!-- 2. 메인 게임 화면 -->
     <div id="game-screen" class="screen">
         <div class="status-bar">
             <div class="status-item">❤️ 생명력: <span id="stat-life" class="val">20</span></div>
@@ -559,13 +550,10 @@
 
         <div class="game-main">
             <div class="board-container">
-                <!-- 💻 100% CSS 박스로 구성된 게임 보드판 -->
                 <div id="game-board"></div>
-                <!-- 실시간 사정거리 마법진 가이드 레이어 -->
                 <div id="range-guide" class="range-indicator"></div>
             </div>
 
-            <!-- 타워 상점 연구소 -->
             <div class="sidebar">
                 <div class="side-title">타워 연구소</div>
                 <div class="shop-items">
@@ -605,7 +593,6 @@
             </div>
         </div>
 
-        <!-- 하단 국어 퀴즈 영역 개편 -->
         <div class="quiz-area">
             <div class="quiz-question-container">
                 <div class="quiz-type" id="quiz-type">유의어</div>
@@ -620,7 +607,7 @@
         </div>
     </div>
 
-    <!-- 3. 랜덤 보상 행운 상자 팝업 모달 -->
+    <!-- 3. 보상 상자 모달 -->
     <div id="chest-overlay" class="overlay">
         <div class="overlay-content">
             <h2 style="color: var(--primary); font-size: 2.2rem;">정답입니다! 🎉</h2>
@@ -635,7 +622,7 @@
         </div>
     </div>
 
-    <!-- 4. 게임 오버 엔딩 화면 -->
+    <!-- 4. 게임 오버 엔딩 모달 -->
     <div id="gameover-overlay" class="overlay">
         <div class="overlay-content">
             <h2 style="color: #ff4b5c; font-size: 2.8rem; margin-bottom: 20px;">기지 함락 😢</h2>
@@ -694,14 +681,14 @@
             { question: "'비슷하다'의 반의어로 알맞은 것은?", options: ["다르다", "틀리다", "똑같다", "새롭다"], answer: 0, type: "반의어" },
             { question: "'원인'의 반의어로 알맞은 것은?", options: ["과정", "결과", "이유", "목적"], answer: 1, type: "반의어" },
             { question: "'절약'의 반의어로 알맞은 것은?", options: ["낭비", "소비", "지출", "사치"], answer: 0, type: "반의어" },
-            { question: "신체 부위 '머리'와 우두머리를 뜻하는 '우두머리'의 '머리' 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
+            { question: "신체 부위 '머리'와 우두머리를 뜻하는 '머리'의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
             { question: "'가깝다'의 반의어로 알맞은 것은?", options: ["멀다", "높다", "넓다", "길다"], answer: 0, type: "반의어" },
             { question: "'틀리다'의 반의어로 알맞은 것은?", options: ["맞다", "옳다", "쉽다", "바르다"], answer: 0, type: "반의어" },
-            // 추가 문제 51~100선
+            // 51~100 추가 문제
             { question: "'부지런하다'의 반의어로 가장 적절한 것은?", options: ["깨끗하다", "게으르다", "조용하다", "느긋하다"], answer: 1, type: "반의어" },
             { question: "'차분하다'의 유의어로 가장 알맞은 것은?", options: ["급하다", "침착하다", "소란하다", "활달하다"], answer: 1, type: "유의어" },
             { question: "'햇빛이 강하다'의 '강하다'와 '바람이 세다'의 '강하다'의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
-            { question: "배를 정박시키는 '닻'과 나이를 세는 단어의 충청 방언 '닻'의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
+            { question: "배를 정박시키는 '닻'과 나이를 세는 '살'의 방언 '닻'의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
             { question: "'영리하다'의 유의어로 알맞은 것은?", options: ["똑똑하다", "착하다", "순진하다", "점잖다"], answer: 0, type: "유의어" },
             { question: "'넓다'의 반의어로 가장 알맞은 것은?", options: ["좁다", "낮다", "얇다", "작다"], answer: 0, type: "반의어" },
             { question: "'슬픔'의 반의어로 가장 알맞은 단어는?", options: ["기쁨", "감동", "외로움", "평화"], answer: 0, type: "반의어" },
@@ -715,50 +702,46 @@
             { question: "'조용하다'의 반의어로 가장 알맞은 것은?", options: ["시끄럽다", "복잡하다", "급하다", "빠르다"], answer: 0, type: "반의어" },
             { question: "'아끼다'의 반의어로 가장 알맞은 것은?", options: ["버리다", "지르다", "낭비하다", "모으다"], answer: 2, type: "반의어" },
             { question: "'단정하다'의 유의어로 가장 알맞은 것은?", options: ["깔끔하다", "수수하다", "화려하다", "아담하다"], answer: 0, type: "유의어" },
-            { question: "사람이 마시는 '차'와 길을 달리는 '차'의 언어적 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
+            { question: "사람이 마시는 '차'와 길을 달리는 '차'의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
             { question: "'줄을 서다'의 '줄'과 '끈'을 의미하는 '줄'의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
             { question: "'위험하다'의 반의어로 가장 알맞은 것은?", options: ["안전하다", "편안하다", "튼튼하다", "조용하다"], answer: 0, type: "반의어" },
             { question: "'용감하다'의 반의어로 가장 알맞은 것은?", options: ["비겁하다", "겁 많다", "나약하다", "착하다"], answer: 1, type: "반의어" },
             { question: "'희망'의 반의어로 가장 알맞은 단어는?", options: ["절망", "고통", "슬픔", "걱정"], answer: 0, type: "반의어" },
             { question: "'살피다'의 유의어로 가장 알맞은 단어는?", options: ["관찰하다", "조사하다", "생각하다", "만지다"], answer: 0, type: "유의어" },
-            { question: "곡식을 찧는 '방아'와 곤충 '방아깨비'의 '방아'는 어떤 관계?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
+            { question: "곡식을 찧는 '방아'와 곤충 '방아깨비'의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
             { question: "문장 성분의 '주어'와 주워 담는 행동의 '주어'의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
             { question: "'흐리다'의 반의어로 가장 알맞은 것은?", options: ["맑다", "눈부시다", "하얗다", "푸르다"], answer: 0, type: "반의어" },
             { question: "'친절하다'의 반의어로 가장 알맞은 것은?", options: ["심술궂다", "불친절하다", "무섭다", "나쁘다"], answer: 1, type: "반의어" },
             { question: "'신속하다'의 유의어로 가장 알맞은 것은?", options: ["조용하다", "정확하다", "신중하다", "재빠르다"], answer: 3, type: "유의어" },
-            { question: "'국수'를 가락 국수라고 할 때와 한 나라의 최고 우두머리(國首)라 할 때의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
+            { question: "'국수'를 면 요리라고 할 때와 한 나라의 최고 우두머리라 할 때의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
             { question: "'매듭을 묶다'의 '매듭'과 '사건의 해결점'을 뜻하는 '매듭'의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
             { question: "'과거'의 반의어로 가장 알맞은 단어는?", options: ["미래", "현재", "오늘", "내일"], answer: 0, type: "반의어" },
             { question: "'전부'의 반의어로 가장 알맞은 단어는?", options: ["일부", "조금", "나머지", "반절"], answer: 0, type: "반의어" },
             { question: "'거짓'의 반의어로 가장 알맞은 단어는?", options: ["참", "진실", "사실", "솔직"], answer: 0, type: "반의어" },
             { question: "'온화하다'의 유의어로 가장 알맞은 성품은?", options: ["따뜻하다", "차분하다", "온순하다", "너그럽다"], answer: 2, type: "유의어" },
             { question: "'귀중하다'의 유의어로 가장 알맞은 것은?", options: ["귀하다", "소중하다", "특별하다", "비싸다"], answer: 1, type: "유의어" },
-            { question: "신체적 '변'과 한자 날 '변'의 관계는 무슨 관계일까요?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
+            { question: "신체 배설물 '변'과 자리를 뜻하는 '변'의 관계는 무슨 관계일까요?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
             { question: "'뿌리를 내리다'의 '뿌리'와 '문제의 근원'을 뜻하는 '뿌리'의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
             { question: "'유익하다'의 반의어로 가장 알맞은 단어는?", options: ["해롭다", "나쁘다", "쓸모없다", "부족하다"], answer: 0, type: "반의어" },
             { question: "'수집하다'의 유의어로 가장 알맞은 행동은?", options: ["정리하다", "모으다", "찾아내다", "간직하다"], answer: 1, type: "유의어" },
             { question: "'풍부하다'의 반의어로 가장 알맞은 것은?", options: ["모자라다", "빈약하다", "부족하다", "가난하다"], answer: 2, type: "반의어" },
             { question: "야구공을 '던지다'와 시선을 '던지다'의 단어 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
-            { question: "글자를 적는 '종이'와 사람 성씨인 '종이'의 관계는 무엇일까요?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
+            { question: "글자를 적는 '종이'와 사람 성씨 종씨인 '종이'의 관계는 무엇일까요?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
             { question: "'확대하다'의 반의어로 가장 알맞은 조치는?", options: ["축소하다", "줄이다", "생략하다", "제한하다"], answer: 0, type: "반의어" },
             { question: "'획득하다'의 유의어로 가장 알맞은 것은?", options: ["차지하다", "얻다", "빼앗다", "성공하다"], answer: 1, type: "유의어" },
-            { question: "'영광'의 반의어로 가장 알맞은 감정이나 상황은?", options: ["슬픔", "치욕", "좌절", "실패"], answer: 1, type: "반의어" },
+            { question: "'영광'의 반의어로 가장 알맞은 상황은?", options: ["슬픔", "치욕", "좌절", "실패"], answer: 1, type: "반의어" },
             { question: "물건을 '사다'와 사람의 환심을 '사다'의 언어적 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
             { question: "과일의 '살'과 생물의 '살'은 어떤 관계일까요?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
-            { question: "바다의 마르는 '김'과 밥에 싸 먹는 '김'의 낱말 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
+            { question: "바다 안개 '김'과 밥에 싸 먹는 '김'의 낱말 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
             { question: "'신중하다'의 반의어로 가장 알맞은 태도는?", options: ["경솔하다", "가볍다", "급하다", "무책임하다"], answer: 0, type: "반의어" },
             { question: "'완벽하다'의 유의어로 가장 알맞은 상태는?", options: ["정확하다", "훌륭하다", "흠잡을 데 없다", "깨끗하다"], answer: 2, type: "유의어" }
         ];
 
-        // --- 맵 데이터 구조 (Grid 행/열 위치 정의) ---
+        // --- 맵 레이아웃 데이터 ---
         const mapLayouts = [
-            // 0: 쉬움
             [[0,2], [1,2], [2,2], [3,2], [4,2], [5,2], [5,3], [5,4], [5,5], [5,6], [5,7], [6,7], [7,7], [8,7], [9,7], [10,7], [10,6], [10,5], [10,4], [10,3], [11,3], [12,3], [13,3], [14,3], [15,3]],
-            // 1: 보통
             [[0,4], [1,4], [2,4], [3,4], [3,3], [3,2], [3,1], [4,1], [5,1], [6,1], [7,1], [8,1], [8,2], [8,3], [8,4], [8,5], [8,6], [8,7], [8,8], [9,8], [10,8], [11,8], [12,8], [12,7], [12,6], [12,5], [12,4], [13,4], [14,4], [15,4]],
-            // 2: 어려움
             [[0,1], [1,1], [2,1], [3,1], [4,1], [5,1], [6,1], [7,1], [8,1], [9,1], [10,1], [11,1], [12,1], [13,1], [14,1], [14,2], [14,3], [14,4], [14,5], [14,6], [14,7], [14,8], [13,8], [12,8], [11,8], [10,8], [9,8], [8,8], [7,8], [6,8], [5,8], [4,8], [3,8], [2,8], [2,7], [2,6], [2,5], [2,4], [2,3], [3,3], [4,3], [5,3], [6,3], [7,3], [8,3], [9,3], [10,3], [11,3], [11,4], [11,5], [11,6], [10,6], [9,6], [8,6], [7,6], [6,6], [5,6], [5,5], [6,5], [7,5], [8,5], [9,5], [12,5], [13,5], [14,5], [15,5]],
-            // 3: 지옥
             [[0,5], [1,5], [2,5], [3,5], [3,4], [3,3], [4,3], [5,3], [6,3], [7,3], [8,3], [9,3], [10,3], [11,3], [12,3], [12,4], [12,5], [13,5], [14,5], [15,5]]
         ];
 
@@ -779,7 +762,12 @@
             towers: [], monsters: [], projectiles: [], currentQuiz: null, idCounter: 0
         };
 
-        // --- 맵 구조판 그리기 (HTML DOM 사전에 꽉 채우기) ---
+        // 🛠️ 빼먹었던 길 검증 헬퍼 함수 복원!
+        function isTileOnPath(tx, ty) {
+            const currentMapLayout = mapLayouts[state.selectedMap];
+            return currentMapLayout.some(p => p[0] === tx && p[1] === ty);
+        }
+
         function initBoard() {
             const board = document.getElementById('game-board');
             board.innerHTML = '';
@@ -793,19 +781,15 @@
                     tile.dataset.row = r;
                     tile.dataset.col = c;
 
-                    // 오솔길 여부 체크
-                    const isPath = pathTiles.some(p => p[0] === c && p[1] === r);
-                    if (isPath) {
+                    if (isTileOnPath(c, r)) {
                         tile.classList.add('path-tile');
                     } else {
-                        // 일반 잔디밭 타일 중 무작위 요소로 나무🌲나 바위🪨 장식 깔기
-                        if (Math.random() < 0.08 && !(c===0 && r===0)) {
+                        if (Math.random() < 0.08) {
                             tile.innerText = Math.random() < 0.6 ? '🌲' : '🪨';
                             tile.style.opacity = '0.85';
                         }
                     }
 
-                    // 타일 클릭 리스너 연결
                     tile.addEventListener('click', () => handleTileClick(c, r));
                     board.appendChild(tile);
                 }
@@ -821,10 +805,10 @@
             
             updateUI();
             loadNewQuiz();
-            setInterval(MainEngineTick, 30); // 30ms 주기로 프레임 구동 (약 33fps)
+            setInterval(MainEngineTick, 30);
         }
 
-        // --- QUIZ & BUFFERED REWARD SYSTEM ---
+        // --- 퀴즈 및 보상 흐름 ---
         function loadNewQuiz() {
             const randomIndex = Math.floor(Math.random() * quizDatabase.length);
             state.currentQuiz = quizDatabase[randomIndex];
@@ -849,7 +833,7 @@
             } else {
                 state.combo = 0;
                 state.solvedCount += 1;
-                alert("오답입니다! 다음 문제를 연마하여 기지에 에너지를 채우세요.");
+                alert("오답입니다! 다음 문제를 풀어 수호 에너지를 마저 충전하세요.");
                 checkWaveCondition();
                 loadNewQuiz();
             }
@@ -879,13 +863,13 @@
 
             if (roll < 0.35) {
                 state.gold += (100 + bonus);
-                msg = `💰 일반 보상 보관함 적립! +${100 + bonus} 골드 달성!`;
+                msg = `💰 보상 보관함 적립 완료! +${100 + bonus} 골드 획득!`;
             } else if (roll < 0.65) {
                 state.gold += (250 + bonus);
-                msg = `💎 메가 행운 상자 적립! +${250 + bonus} 골드 달성!`;
+                msg = `💎 메가 행운 상자 잭팟! +${250 + bonus} 골드 획득!`;
             } else {
-                state.storedBuffTime += 10; // 버프 누적 보관!
-                msg = `⚡ 초강력 공속 버프 예약! 다음 웨이브가 펼쳐지면 10초간 자동 가동됩니다!`;
+                state.storedBuffTime += 10;
+                msg = `⚡ 초강력 공속 버프 이월 적립! 웨이브 전투가 시작되면 10초간 자동 가동됩니다!`;
             }
             document.getElementById('reward-result').innerText = msg;
             document.getElementById('chest-close-btn').style.display = "inline-block";
@@ -898,7 +882,7 @@
             loadNewQuiz();
         }
 
-        // --- INTERACTION & PLACEMENT ENGINE ---
+        // --- 배치 및 타워 조작 ---
         function selectShopItem(type) {
             if (state.selectedShopItem === type) {
                 state.selectedShopItem = null;
@@ -911,26 +895,24 @@
         }
 
         function handleTileClick(c, r) {
-            // 1. 상점 아이템이 선택된 상태라면 배치 시도
             if (state.selectedShopItem) {
                 const spec = TOWER_SPECS[state.selectedShopItem];
                 if (isTileOnPath(c, r)) {
-                    alert("요괴가 지나다니는 흙길 위에는 타워를 지을 수 없습니다!");
+                    alert("요괴가 다니는 흙길 위에는 타워를 지을 수 없습니다!");
                     return;
                 }
                 if (state.towers.some(t => t.cx === c && t.cy === r)) {
-                    alert("이미 방어 시설이 구축된 타일입니다.");
+                    alert("이미 타워가 배치된 장소입니다.");
                     return;
                 }
                 if (state.gold < spec.cost) {
-                    alert("연구 자금(골드)이 부족합니다.");
+                    alert("골드가 모자랍니다!");
                     return;
                 }
 
                 state.gold -= spec.cost;
                 const id = 'tower_' + state.idCounter++;
                 
-                // DOM 객체 생성 및 격자 배치
                 const towerEl = document.createElement('div');
                 towerEl.id = id;
                 towerEl.classList.add('tower-obj');
@@ -955,7 +937,6 @@
                     currentCooldown: 0, spec: spec, el: towerEl
                 };
 
-                // 클릭해서 정보 조회 기능 연결
                 towerEl.addEventListener('click', (e) => {
                     e.stopPropagation();
                     state.selectedPlacedTower = newTower;
@@ -969,7 +950,6 @@
                 return;
             }
 
-            // 빈 잔디밭 선택 시 디테일 패널 비활성화
             state.selectedPlacedTower = null;
             hideRangeGuide();
             updateUI();
@@ -994,7 +974,7 @@
 
             const cost = UPGRADE_COSTS[t.level - 1];
             if (state.gold < cost) {
-                alert("골드가 모자랍니다!");
+                alert("골드가 마땅치 않습니다.");
                 return;
             }
 
@@ -1004,9 +984,7 @@
             t.range = Math.round(t.range * 1.15);
 
             document.getElementById(t.id + '_badge').innerText = `Lv.${t.level}`;
-            if (t.level === 5) {
-                t.el.classList.add('max-level');
-            }
+            if (t.level === 5) t.el.classList.add('max-level');
             showRangeGuide(t);
             updateUI();
         }
@@ -1018,7 +996,7 @@
             document.getElementById('speed-btn').innerText = `배속: ${state.gameSpeed}x`;
         }
 
-        // --- WAVE SPAWN CONTROL ---
+        // --- 웨이브 기동 ---
         function startWave() {
             if (state.isWaveActive) return;
             state.isWaveActive = true;
@@ -1026,11 +1004,10 @@
 
             const btn = document.getElementById('wave-btn');
             btn.disabled = true;
-            btn.innerText = `격전 중...`;
+            btn.innerText = `전투 격전 중...`;
 
-            // 핵심수정: 웨이브 오픈되는 찰나에 적립고에 쌓인 버프 주입
             if (state.storedBuffTime > 0) {
-                state.activeBuffTimer += state.storedBuffTime * 33; // 33fps 기준 환산
+                state.activeBuffTimer += state.storedBuffTime * 33;
                 state.storedBuffTime = 0;
             }
 
@@ -1040,7 +1017,7 @@
             const quizTypes = ["유의어", "반의어", "동음이의어", "다의어"];
 
             if (isBossWave) {
-                spawnMonster(pathTiles, baseHp * 10, true, '👹', '다의어');
+                spawnMonster(pathTiles, baseHp * 11, true, '👹', '다의어');
             } else {
                 let spawned = 0;
                 let timerId = setInterval(() => {
@@ -1065,7 +1042,6 @@
             mEl.innerText = emoji;
             if (isBoss) mEl.style.fontSize = '3.2rem';
 
-            // 구조 바 생성
             const hpBar = document.createElement('div');
             hpBar.classList.add('monster-hp-bar');
             const hpFill = document.createElement('div');
@@ -1074,13 +1050,11 @@
             hpBar.appendChild(hpFill);
             mEl.appendChild(hpBar);
 
-            // 약점 태그 부착
             const weakTag = document.createElement('div');
             weakTag.classList.add('monster-weakness');
             weakTag.innerText = `약점:${weakness}`;
             mEl.appendChild(weakTag);
 
-            // 시작 좌표 설정
             const startNode = path[0];
             mEl.style.left = `${startNode[0] * TILE_SIZE + TILE_SIZE/2}px`;
             mEl.style.top = `${startNode[1] * TILE_SIZE + TILE_SIZE/2}px`;
@@ -1095,9 +1069,8 @@
             });
         }
 
-        // --- CORE REAL-TIME LOGIC ENGINE ---
+        // --- 주기적 핵심 엔진 구동 ---
         function MainEngineTick() {
-            // 배속 가중치 루프
             for (let k = 0; k < state.gameSpeed; k++) {
                 updateFrameLogic();
             }
@@ -1106,17 +1079,14 @@
         function updateFrameLogic() {
             if (state.activeBuffTimer > 0) {
                 state.activeBuffTimer--;
-                document.getElementById('buff-indicator').style.display = 'block';
-            } else {
-                document.getElementById('buff-indicator').style.display = 'none';
             }
 
             const path = mapLayouts[state.selectedMap];
 
-            // 1. 요괴 이동 처리
+            // 1. 요괴 전진 연산
             for (let i = state.monsters.length - 1; i >= 0; i--) {
                 let m = state.monsters[i];
-                let speed = m.isBoss ? 0.7 : 1.4;
+                let speed = m.isBoss ? 0.8 : 1.5;
                 if (m.slowTimer > 0) {
                     m.slowTimer--;
                     speed *= 0.5;
@@ -1124,7 +1094,6 @@
 
                 let targetIdx = m.pathIndex + 1;
                 if (targetIdx >= path.length) {
-                    // 성문 침투 성벽 붕괴
                     state.life -= (m.isBoss ? 5 : 1);
                     m.el.remove();
                     state.monsters.splice(i, 1);
@@ -1149,12 +1118,11 @@
                     m.y += (dy / dist) * speed;
                 }
 
-                // CSS 렌더링 반영
                 m.el.style.left = `${m.x}px`;
                 m.el.style.top = `${m.y}px`;
             }
 
-            // 2. 타워 쿨다운 확인 및 사격 개시 AI
+            // 2. 타워 공격 대기 및 사격 AI
             state.towers.forEach(t => {
                 if (t.currentCooldown > 0) {
                     t.currentCooldown -= (state.activeBuffTimer > 0 ? 2 : 1);
@@ -1171,12 +1139,10 @@
                 }
 
                 if (targetMonster) {
-                    // 둠칫 타워 발사 모션 CSS 클래스 토글링 트리거
                     t.el.classList.remove('tower-shoot-anim');
-                    void t.el.offsetWidth; // DOM 강제 리플로우 유발
+                    void t.el.offsetWidth; 
                     t.el.classList.add('tower-shoot-anim');
 
-                    // 투사체 DOM 엘리먼트 동적 빌드
                     const pId = 'proj_' + state.idCounter++;
                     const pEl = document.createElement('div');
                     pEl.id = pId;
@@ -1188,13 +1154,13 @@
 
                     state.projectiles.push({
                         id: pId, x: t.x, y: t.y, target: targetMonster, el: pEl,
-                        speed: 7, damage: t.damage, type: t.type
+                        speed: 8, damage: t.damage, type: t.type
                     });
                     t.currentCooldown = t.cooldown;
                 }
             });
 
-            // 3. 투사체 궤적 추적 연산
+            // 3. 투사체 이동 및 충돌
             for (let i = state.projectiles.length - 1; i >= 0; i--) {
                 let p = state.projectiles[i];
                 if (!state.monsters.includes(p.target)) {
@@ -1208,21 +1174,17 @@
                 let pdist = Math.sqrt(pdx*pdx + pdy*pdy);
 
                 if (pdist <= p.speed) {
-                    // 🎯 충돌 성공! 데미지 가산 산출
                     let finalDmg = p.damage;
                     if (p.target.weakness === state.currentQuiz.type) {
                         finalDmg = Math.round(finalDmg * 1.5);
                     }
 
                     p.target.hp -= finalDmg;
-
-                    // 💥 CSS 펑 타격감 이펙트 엘리먼트 가동
                     createHitEffect(p.target.x, p.target.y);
 
                     if (p.type === 'ice') {
                         p.target.slowTimer = 150;
                     } else if (p.type === 'bomb') {
-                        // 광역 스플래시 데미지 유발
                         state.monsters.forEach(other => {
                             if (other !== p.target) {
                                 let distToSplash = Math.sqrt((other.x - p.target.x)**2 + (other.y - p.target.y)**2);
@@ -1234,14 +1196,12 @@
                         });
                     }
 
-                    // 체력바 갱신
                     const hpFill = document.getElementById(p.target.id + '_hp');
                     if (hpFill) {
                         let ratio = Math.max(0, p.target.hp / p.target.maxHp);
                         hpFill.style.width = `${ratio * 100}%`;
                     }
 
-                    // 몬스터 전멸 소멸 연산
                     if (p.target.hp <= 0) {
                         let mIdx = state.monsters.indexOf(p.target);
                         if (mIdx > -1) {
@@ -1286,7 +1246,6 @@
             }
         }
 
-        // --- UI RE-SINK LAYER ---
         function updateUI() {
             document.getElementById('stat-life').innerText = state.life;
             document.getElementById('stat-gold').innerText = state.gold;
