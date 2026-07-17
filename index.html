@@ -121,7 +121,6 @@
             display: grid;
         }
 
-        /* 상단 상태 바 */
         .status-bar {
             background: var(--bg-dark);
             display: flex;
@@ -156,7 +155,6 @@
             to { opacity: 1; transform: scale(1.05); }
         }
 
-        /* 중간 게임 영역 */
         .game-main {
             display: grid;
             grid-template-columns: 1fr 240px;
@@ -173,7 +171,6 @@
             overflow: hidden;
         }
 
-        /* CSS 맵 격자판 */
         #game-board {
             display: grid;
             grid-template-columns: repeat(16, var(--tile-size));
@@ -186,7 +183,6 @@
             box-shadow: 0 8px 25px rgba(0,0,0,0.6);
         }
 
-        /* 기본 타일 스타일 (잔디 그라데이션) */
         .tile {
             width: var(--tile-size);
             height: var(--tile-size);
@@ -197,16 +193,14 @@
             font-size: 1.2rem;
             position: relative;
             cursor: pointer;
+            z-index: 2;
         }
 
-        /* 입체감 있는 흙길 */
         .tile.path-tile {
             background: linear-gradient(135deg, #e9cc8b, #dfbf73);
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.15);
-            cursor: not-allowed;
+            cursor: default;
         }
 
-        /* 사정거리 표시 링 */
         .range-indicator {
             position: absolute;
             border-radius: 50%;
@@ -260,9 +254,9 @@
             font-weight: bold;
             padding: 1px 5px;
             border-radius: 4px;
+            pointer-events: none;
         }
 
-        /* 요괴 캐릭터 */
         .monster-obj {
             position: absolute;
             width: 38px;
@@ -335,7 +329,7 @@
             100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; }
         }
 
-        /* --- 4. 우측 상점 및 하단 퀴즈 UI --- */
+        /* --- 4. 사이드바 및 상점 UI --- */
         .sidebar {
             background: var(--bg-dark);
             border-left: 3px solid #2d3250;
@@ -550,8 +544,10 @@
 
         <div class="game-main">
             <div class="board-container">
-                <div id="game-board"></div>
-                <div id="range-guide" class="range-indicator"></div>
+                <div id="game-board">
+                    <!-- 사정거리 가이드를 보드판 내부에 고정 -->
+                    <div id="range-guide" class="range-indicator"></div>
+                </div>
             </div>
 
             <div class="sidebar">
@@ -632,6 +628,11 @@
     </div>
 
     <script>
+        // 🚨 누락되었던 핵심 기초 변수 완벽 복원!
+        const TILE_SIZE = 50;
+        const MAP_COLS = 16;
+        const MAP_ROWS = 10;
+
         // --- AUTHENTIC 100 KOREAN VOCABULARY QUESTIONS ---
         const quizDatabase = [
             { question: "'가르치다'의 유의어는 무엇일까요?", options: ["배우다", "지도하다", "지시하다", "모르다"], answer: 1, type: "유의어" },
@@ -762,15 +763,15 @@
             towers: [], monsters: [], projectiles: [], currentQuiz: null, idCounter: 0
         };
 
-        // 🛠️ 빼먹었던 길 검증 헬퍼 함수 복원!
         function isTileOnPath(tx, ty) {
             const currentMapLayout = mapLayouts[state.selectedMap];
             return currentMapLayout.some(p => p[0] === tx && p[1] === ty);
         }
 
+        // 🚨 보드판 생성 안전화: range-guide가 삭제되지 않게 보존
         function initBoard() {
             const board = document.getElementById('game-board');
-            board.innerHTML = '';
+            board.innerHTML = '<div id="range-guide" class="range-indicator"></div>';
             
             const pathTiles = mapLayouts[state.selectedMap];
 
@@ -778,8 +779,8 @@
                 for (let c = 0; c < MAP_COLS; c++) {
                     const tile = document.createElement('div');
                     tile.classList.add('tile');
-                    tile.dataset.row = r;
                     tile.dataset.col = c;
+                    tile.dataset.row = r;
 
                     if (isTileOnPath(c, r)) {
                         tile.classList.add('path-tile');
@@ -937,6 +938,7 @@
                     currentCooldown: 0, spec: spec, el: towerEl
                 };
 
+                // 🚨 독립된 클릭 이벤트로 업그레이드 패널 정상 오픈
                 towerEl.addEventListener('click', (e) => {
                     e.stopPropagation();
                     state.selectedPlacedTower = newTower;
@@ -974,7 +976,7 @@
 
             const cost = UPGRADE_COSTS[t.level - 1];
             if (state.gold < cost) {
-                alert("골드가 마땅치 않습니다.");
+                alert("골드가 부족합니다.");
                 return;
             }
 
