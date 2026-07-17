@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>어휘 수호대: 국어 타워 디펜스 프리미엄</title>
+    <title>어휘 수호대: 국어 타워 디펜스 2 (CSS Edition)</title>
     <style>
+        :root {
+            --primary: #5cdb95;
+            --bg-dark: #1a1c2e;
+            --bg-deep: #141423;
+            --panel-bg: #22263f;
+            --neon-shadow: 0 0 15px rgba(92, 219, 149, 0.4);
+            --tile-size: 50px;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -14,7 +23,7 @@
         }
 
         body {
-            background-color: #141423;
+            background-color: var(--bg-deep);
             color: #ffffff;
             display: flex;
             flex-direction: column;
@@ -22,6 +31,13 @@
             overflow: hidden;
         }
 
+        /* 공통 네온 테두리 스타일 */
+        .neon-box {
+            border: 2px solid var(--primary);
+            box-shadow: var(--neon-shadow);
+        }
+
+        /* --- 1. 로비 / 맵 선택 화면 --- */
         .screen {
             display: none;
             width: 100%;
@@ -45,21 +61,18 @@
 
         .lobby-container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(26, 28, 46, 0.85);
             padding: 45px;
             border-radius: 24px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            backdrop-filter: blur(15px);
             max-width: 650px;
             width: 90%;
-            border: 1px solid rgba(255,255,255,0.2);
         }
 
         h1 {
             font-size: 3.2rem;
-            color: #5cdb95;
+            color: var(--primary);
             margin-bottom: 12px;
-            text-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            text-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
         .subtitle {
@@ -72,12 +85,11 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 18px;
-            margin-bottom: 10px;
         }
 
         .map-btn {
-            background: #1a2238;
-            border: 2px solid #5cdb95;
+            background: var(--bg-deep);
+            border: 2px solid var(--primary);
             color: white;
             padding: 22px;
             border-radius: 16px;
@@ -88,10 +100,10 @@
         }
 
         .map-btn:hover {
-            background: #5cdb95;
-            color: #1a1a2e;
+            background: var(--primary);
+            color: var(--bg-deep);
             transform: translateY(-4px);
-            box-shadow: 0 5px 15px rgba(92, 219, 149, 0.4);
+            box-shadow: 0 5px 20px rgba(92, 219, 149, 0.6);
         }
 
         .map-btn span {
@@ -102,6 +114,7 @@
             opacity: 0.85;
         }
 
+        /* --- 2. 메인 게임 화면 레이아웃 --- */
         #game-screen {
             display: none;
             grid-template-rows: 65px 1fr 220px;
@@ -112,8 +125,9 @@
             display: grid;
         }
 
+        /* 상단 상태 바 */
         .status-bar {
-            background: #1a1c2e;
+            background: var(--bg-dark);
             display: flex;
             align-items: center;
             justify-content: space-around;
@@ -124,58 +138,214 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .status-item .val {
-            color: #5cdb95;
+            color: var(--primary);
             font-size: 1.4rem;
-            text-shadow: 0 0 5px rgba(92,219,149,0.3);
+            font-weight: bold;
         }
 
         .buff-active {
             background: #ff4b5c;
             padding: 6px 14px;
             border-radius: 8px;
-            animation: pulse 0.8s infinite alternate;
+            animation: pulse-buff 0.8s infinite alternate;
             font-size: 0.95rem;
             display: none;
             font-weight: bold;
             box-shadow: 0 0 10px rgba(255,75,92,0.5);
         }
 
-        @keyframes pulse {
+        @keyframes pulse-buff {
             from { opacity: 0.7; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1.05); }
         }
 
+        /* 중간 게임 판 및 상점 */
         .game-main {
             display: grid;
             grid-template-columns: 1fr 240px;
-            background: #141423;
-            position: relative;
+            background: var(--bg-deep);
         }
 
-        .canvas-container {
+        .board-container {
             display: flex;
             justify-content: center;
             align-items: center;
             background: #0f101d;
             padding: 15px;
             position: relative;
+            overflow: hidden;
         }
 
-        canvas {
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        /* 💻 CSS 맵 격자판 (Grid 구조) */
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(16, var(--tile-size));
+            grid-template-rows: repeat(10, var(--tile-size));
+            width: 800px;
+            height: 500px;
+            position: relative;
             border-radius: 12px;
-            cursor: crosshair;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
         }
 
+        /* 기본 타일 스타일 (북유럽풍 예쁜 그라데이션 잔디) */
+        .tile {
+            width: var(--tile-size);
+            height: var(--tile-size);
+            background: linear-gradient(135deg, #6bc15b, #5fb24f);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+
+        /* 입체감 있는 황토색 오솔길 */
+        .tile.path-tile {
+            background: linear-gradient(135deg, #e9cc8b, #dfbf73);
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.15);
+        }
+
+        /* 타워 배치 범위 원 (네온 마법진 연출) */
+        .range-indicator {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(92, 219, 149, 0.12);
+            border: 2px dashed var(--primary);
+            box-shadow: var(--neon-shadow);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            display: none;
+        }
+
+        /* --- 3. 타워 & 몬스터 & 애니메이션 객체 구성 --- */
+        /* 세련된 마법진 모양 타워 */
+        .tower-obj {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            position: absolute;
+            z-index: 6;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4), inset 0 0 6px rgba(255,255,255,0.4);
+            border: 2px solid #fff;
+            transform: translate(-50%, -50%);
+            transition: border-color 0.2s;
+        }
+
+        .tower-obj.max-level {
+            border-color: #ffd700;
+            box-shadow: 0 0 12px #ffd700;
+        }
+
+        /* 타워 발사 모션 둠칫 애니메이션 */
+        @keyframes tower-shoot {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            30% { transform: translate(-50%, -50%) scale(1.3); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .tower-shoot-anim {
+            animation: tower-shoot 0.2s ease-out;
+        }
+
+        .tower-level-badge {
+            position: absolute;
+            bottom: -14px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            font-size: 9px;
+            font-weight: bold;
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+
+        /* 귀여운 요괴 몬스터 (CSS Absolute 무빙) */
+        .monster-obj {
+            position: absolute;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.7rem;
+            z-index: 7;
+            transform: translate(-50%, -50%);
+            transition: left 0.1s linear, top 0.1s linear;
+            /* 둥실둥실 춤추는 애니메이션 탑재 */
+            animation: monster-bounce 0.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes monster-bounce {
+            from { margin-top: -3px; }
+            to { margin-top: 3px; }
+        }
+
+        .monster-hp-bar {
+            position: absolute;
+            top: -8px;
+            width: 36px;
+            height: 5px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .monster-hp-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 100%;
+        }
+
+        .monster-weakness {
+            position: absolute;
+            top: -20px;
+            font-size: 9px;
+            font-weight: bold;
+            background: rgba(255,255,208,0.9);
+            color: #1a1a2e;
+            padding: 1px 4px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        /* CSS 비주얼 투사체 */
+        .projectile-obj {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            z-index: 8;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 6px rgba(255,255,255,0.8);
+        }
+
+        /* 💥 펑 터지는 타격감 이펙트 애니메이션 */
+        .hit-effect {
+            position: absolute;
+            font-size: 1.8rem;
+            z-index: 9;
+            transform: translate(-50%, -50%) scale(0.5);
+            animation: hit-fade 0.25s forwards ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes hit-fade {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; }
+        }
+
+        /* --- 4. 우측 상점 및 하단 퀴즈창 UI 개편 --- */
         .sidebar {
-            background: #1a1c2e;
+            background: var(--bg-dark);
             border-left: 3px solid #2d3250;
             padding: 18px;
             display: flex;
@@ -185,7 +355,7 @@
 
         .side-title {
             font-size: 1.2rem;
-            color: #5cdb95;
+            color: var(--primary);
             border-bottom: 2px solid #2d3250;
             padding-bottom: 8px;
             text-align: center;
@@ -199,7 +369,7 @@
         }
 
         .shop-card {
-            background: #22263f;
+            background: var(--panel-bg);
             border: 2px solid transparent;
             border-radius: 12px;
             padding: 12px;
@@ -211,7 +381,7 @@
         }
 
         .shop-card:hover {
-            border-color: #5cdb95;
+            border-color: var(--primary);
             transform: scale(1.03);
             background: #2a2f4e;
         }
@@ -230,26 +400,6 @@
             justify-content: center;
             align-items: center;
             font-size: 1.6rem;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
-        }
-
-        .t-arrow { background: #4ecca3; }
-        .t-ice { background: #00bcd4; }
-        .t-bomb { background: #ff9800; }
-
-        .tower-info {
-            flex-grow: 1;
-        }
-
-        .tower-name {
-            font-weight: bold;
-            font-size: 1rem;
-        }
-
-        .tower-cost {
-            font-size: 0.88rem;
-            color: #ffd700;
-            font-weight: bold;
         }
 
         .control-panel {
@@ -269,25 +419,20 @@
             color: white;
             transition: all 0.2s ease;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
 
-        .btn-start { 
-            background: #5cdb95; 
-            color: #1a1a2e; 
-        }
+        .btn-start { background: var(--primary); color: var(--bg-deep); }
         .btn-start:disabled {
             background: #4a5068;
             color: #8a90a8;
             cursor: not-allowed;
-            box-shadow: none;
         }
-        .btn-speed { background: #22263f; border: 1px solid #5cdb95; }
+        .btn-speed { background: var(--panel-bg); border: 1px solid var(--primary); }
         .btn:hover:not(:disabled) { transform: translateY(-2px); opacity: 0.95; }
 
         .detail-panel {
-            background: #22263f;
-            border: 2px solid #5cdb95;
+            background: var(--panel-bg);
+            border: 2px solid var(--primary);
             border-radius: 12px;
             padding: 12px;
             display: none;
@@ -295,27 +440,15 @@
             gap: 10px;
         }
 
-        .detail-title {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #5cdb95;
-        }
-
-        .btn-upgrade {
-            background: #ff9800;
-            color: white;
-            font-size: 0.95rem;
-            padding: 10px;
-        }
-
+        /* 야광 테두리가 도는 하단 세련된 퀴즈창 */
         .quiz-area {
-            background: #1a1c2e;
-            border-top: 4px solid #5cdb95;
+            background: var(--bg-dark);
+            border-top: 4px solid var(--primary);
+            box-shadow: 0 -5px 25px rgba(92, 219, 149, 0.2);
             display: grid;
             grid-template-columns: 1.2fr 1fr;
             padding: 20px;
             gap: 25px;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.4);
         }
 
         .quiz-question-container {
@@ -327,8 +460,8 @@
 
         .quiz-type {
             font-size: 0.95rem;
-            background: #5cdb95;
-            color: #1a1a2e;
+            background: var(--primary);
+            color: var(--bg-deep);
             padding: 4px 10px;
             border-radius: 6px;
             width: max-content;
@@ -349,7 +482,7 @@
         }
 
         .option-btn {
-            background: #22263f;
+            background: var(--panel-bg);
             border: 1px solid #2d3250;
             color: white;
             border-radius: 10px;
@@ -358,133 +491,100 @@
             text-align: left;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
         }
 
         .option-btn:hover:not(:disabled) {
             background: #2d3250;
-            border-color: #5cdb95;
-            transform: translateX(3px);
+            border-color: var(--primary);
+            transform: translateX(4px);
+            box-shadow: 0 0 10px rgba(92, 219, 149, 0.2);
         }
-        .option-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+        .option-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+        /* 오버레이 팝업 */
         .overlay {
             display: none;
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85);
             z-index: 100;
-            justify-content: center;
-            align-items: center;
+            justify-content: center; align-items: center;
             flex-direction: column;
         }
 
         .overlay-content {
-            background: #1a1c2e;
-            border: 3px solid #5cdb95;
-            padding: 45px;
-            border-radius: 24px;
-            text-align: center;
-            max-width: 550px;
-            width: 90%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            background: var(--bg-dark);
+            border: 3px solid var(--primary);
+            padding: 45px; border-radius: 24px; text-align: center;
+            max-width: 550px; width: 90%; box-shadow: var(--neon-shadow);
         }
 
-        .chest-container {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin: 35px 0;
-        }
-
+        .chest-container { display: flex; justify-content: center; gap: 25px; margin: 35px 0; }
         .chest {
-            width: 100px;
-            height: 100px;
-            background: #ff9800;
-            border: 4px solid #ff5722;
-            border-radius: 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.8rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            width: 100px; height: 100px; background: #ff9800; border: 4px solid #ff5722;
+            border-radius: 16px; display: flex; justify-content: center; align-items: center;
+            font-size: 2.8rem; cursor: pointer; transition: all 0.2s ease;
         }
-
-        .chest:hover {
-            transform: scale(1.15) rotate(5deg);
-            background: #ffa726;
-        }
-
-        .reward-result {
-            font-size: 1.45rem;
-            color: #ffd700;
-            margin-top: 20px;
-            font-weight: bold;
-            min-height: 35px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
+        .chest:hover { transform: scale(1.15) rotate(5deg); background: #ffa726; }
+        .reward-result { font-size: 1.45rem; color: #ffd700; margin-top: 20px; font-weight: bold; min-height: 35px; }
     </style>
 </head>
 <body>
 
-    <!-- 1. Lobby Screen -->
+    <!-- 1. 로비 / 지형 선택 대문 -->
     <div id="lobby-screen" class="screen active">
         <div class="lobby-container">
-            <h1>어휘 수호대</h1>
-            <p class="subtitle">국어 퀴즈를 맞혀 수호 에너지를 모으고 어휘 요괴를 퇴치하세요!</p>
-            <div style="margin-bottom: 18px; font-weight: bold; color: #5cdb95; font-size:1.2rem;">원하는 테마의 지형을 선택하세요</div>
+            <h1>어휘 수호대 2</h1>
+            <p class="subtitle">100% CSS 엔진으로 각성한 고품격 국어 어휘 수호 대작전!</p>
+            <div style="margin-bottom: 18px; font-weight: bold; color: var(--primary); font-size:1.2rem;">탐험할 오솔길 평원을 선택하세요</div>
             <div class="map-selection">
-                <button class="map-btn" onclick="startGame(0)">초록 잔디 평원 (쉬움) <span>긴 굽은 흙길과 울창한 수풀 지대</span></button>
-                <button class="map-btn" onclick="startGame(1)">S자 계곡 (보통) <span>숲속 깊은 곳 구불구불 이어지는 계곡</span></button>
-                <button class="map-btn" onclick="startGame(2)">어휘 미로 소용돌이 (어려움) <span>빙글빙글 중앙으로 모여드는 소용돌이</span></button>
-                <button class="map-btn" onclick="startGame(3)">요괴의 돌진로 (지옥) <span>단숨에 성문까지 내달리는 최단 직선 코스</span></button>
+                <button class="map-btn" onclick="startGame(0)">초록 잔디 평원 (쉬움) <span>길게 굽어가는 평화로운 오솔길 코스</span></button>
+                <button class="map-btn" onclick="startGame(1)">S자 계곡로 (보통) <span>숲속을 유연하게 가로지르는 리드미컬 코스</span></button>
+                <button class="map-btn" onclick="startGame(2)">어휘 나선 소용돌이 (어려움) <span>빙글빙글 뱅글뱅글 중심부 마법진 미로 코스</span></button>
+                <button class="map-btn" onclick="startGame(3)">요괴의 정면돌진로 (지옥) <span>성벽까지 단숨에 내달리는 초단거리 긴장 코스</span></button>
             </div>
         </div>
     </div>
 
-    <!-- 2. Main Gameplay Screen -->
+    <!-- 2. 메인 게임 시뮬레이터 구성 -->
     <div id="game-screen" class="screen">
         <div class="status-bar">
             <div class="status-item">❤️ 생명력: <span id="stat-life" class="val">20</span></div>
             <div class="status-item">💰 골드: <span id="stat-gold" class="val">200</span></div>
             <div class="status-item">⚔️ 웨이브: <span id="stat-wave" class="val">1</span></div>
-            <div class="status-item">🔥 연속 정답: <span id="stat-combo" class="val">0</span></div>
-            <div class="status-item">📝 연마한 어휘: <span id="stat-solved" class="val">0/5</span></div>
+            <div class="status-item">🔥 연속정답: <span id="stat-combo" class="val">0</span></div>
+            <div class="status-item">📝 어휘 연구: <span id="stat-solved" class="val">0/5</span></div>
             <div id="buff-indicator" class="buff-active">⚡ 저장된 공속 버프 발동 중!</div>
         </div>
 
         <div class="game-main">
-            <div class="canvas-container">
-                <canvas id="gameCanvas" width="800" height="500"></canvas>
+            <div class="board-container">
+                <!-- 💻 100% CSS 박스로 구성된 게임 보드판 -->
+                <div id="game-board"></div>
+                <!-- 실시간 사정거리 마법진 가이드 레이어 -->
+                <div id="range-guide" class="range-indicator"></div>
             </div>
 
+            <!-- 타워 상점 연구소 -->
             <div class="sidebar">
                 <div class="side-title">타워 연구소</div>
                 <div class="shop-items">
                     <div class="shop-card" id="shop-arrow" onclick="selectShopItem('arrow')">
-                        <div class="tower-icon t-arrow">🏹</div>
+                        <div class="tower-icon" style="background:#4ecca3;">🏹</div>
                         <div class="tower-info">
                             <div class="tower-name">화살 타워</div>
                             <div class="tower-cost">100 골드</div>
                         </div>
                     </div>
                     <div class="shop-card" id="shop-ice" onclick="selectShopItem('ice')">
-                        <div class="tower-icon t-ice">❄️</div>
+                        <div class="tower-icon" style="background:#00bcd4;">❄️</div>
                         <div class="tower-info">
                             <div class="tower-name">얼음 타워</div>
                             <div class="tower-cost">150 골드</div>
                         </div>
                     </div>
                     <div class="shop-card" id="shop-bomb" onclick="selectShopItem('bomb')">
-                        <div class="tower-icon t-bomb">💣</div>
+                        <div class="tower-icon" style="background:#ff9800;">💣</div>
                         <div class="tower-info">
                             <div class="tower-name">폭탄 타워</div>
                             <div class="tower-cost">250 골드</div>
@@ -494,8 +594,8 @@
 
                 <div class="detail-panel" id="detail-panel">
                     <div class="detail-title" id="detail-name">타워 정보</div>
-                    <div style="font-size: 0.88rem; color:#ccc;" id="detail-stats">단계: 1 / 공격력: 10</div>
-                    <button class="btn btn-upgrade" id="upgrade-btn" onclick="upgradeSelectedTower()">업그레이드 (100G)</button>
+                    <div style="font-size: 0.88rem; color:#ccc;" id="detail-stats">단계: 1</div>
+                    <button class="btn btn-upgrade" id="upgrade-btn" onclick="upgradeSelectedTower()">업그레이드</button>
                 </div>
 
                 <div class="control-panel">
@@ -505,6 +605,7 @@
             </div>
         </div>
 
+        <!-- 하단 국어 퀴즈 영역 개편 -->
         <div class="quiz-area">
             <div class="quiz-question-container">
                 <div class="quiz-type" id="quiz-type">유의어</div>
@@ -519,11 +620,11 @@
         </div>
     </div>
 
-    <!-- 3. Reward Chest Overlay -->
+    <!-- 3. 랜덤 보상 행운 상자 팝업 모달 -->
     <div id="chest-overlay" class="overlay">
         <div class="overlay-content">
-            <h2 style="color: #5cdb95; font-size: 2.2rem;">정답입니다! 🎉</h2>
-            <p style="margin-top: 12px; color: #ddd;">보물 상자를 열어 보상을 획득하세요!<br>(버프는 다음 웨이브 시작 시 함께 자동 발동됩니다!)</p>
+            <h2 style="color: var(--primary); font-size: 2.2rem;">정답입니다! 🎉</h2>
+            <p style="margin-top: 12px; color: #ddd;">보물 상자를 골라 보상을 적립하세요!<br>(버프는 다음 웨이브 시작 시 이월되어 자동 작동됩니다!)</p>
             <div class="chest-container">
                 <div class="chest" onclick="openChest(0)">🎁</div>
                 <div class="chest" onclick="openChest(1)">🎁</div>
@@ -534,19 +635,18 @@
         </div>
     </div>
 
-    <!-- 4. Game Over Overlay -->
+    <!-- 4. 게임 오버 엔딩 화면 -->
     <div id="gameover-overlay" class="overlay">
         <div class="overlay-content">
             <h2 style="color: #ff4b5c; font-size: 2.8rem; margin-bottom: 20px;">기지 함락 😢</h2>
-            <p id="gameover-summary" style="font-size: 1.3rem; margin-bottom: 35px;">어휘 수호대 임무가 종료되었습니다.</p>
-            <button class="btn btn-start" onclick="location.reload()">처음으로 가기</button>
+            <p id="gameover-summary" style="font-size: 1.3rem; margin-bottom: 35px;"></p>
+            <button class="btn btn-start" onclick="location.reload()">처음 화면으로</button>
         </div>
     </div>
 
     <script>
         // --- AUTHENTIC 100 KOREAN VOCABULARY QUESTIONS ---
         const quizDatabase = [
-            // 1-50 오리지널 셋트
             { question: "'가르치다'의 유의어는 무엇일까요?", options: ["배우다", "지도하다", "지시하다", "모르다"], answer: 1, type: "유의어" },
             { question: "'기쁘다'의 반의어는 무엇일까요?", options: ["슬프다", "즐겁다", "행복하다", "화나다"], answer: 0, type: "반의어" },
             { question: "하늘에 떠 있는 '달'과 한 달 두 달의 '달'은 어떤 관계일까요?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
@@ -597,17 +697,16 @@
             { question: "신체 부위 '머리'와 우두머리를 뜻하는 '우두머리'의 '머리' 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
             { question: "'가깝다'의 반의어로 알맞은 것은?", options: ["멀다", "높다", "넓다", "길다"], answer: 0, type: "반의어" },
             { question: "'틀리다'의 반의어로 알맞은 것은?", options: ["맞다", "옳다", "쉽다", "바르다"], answer: 0, type: "반의어" },
-
-            // 51-100 추가 확장 문제 셋트
+            // 추가 문제 51~100선
             { question: "'부지런하다'의 반의어로 가장 적절한 것은?", options: ["깨끗하다", "게으르다", "조용하다", "느긋하다"], answer: 1, type: "반의어" },
             { question: "'차분하다'의 유의어로 가장 알맞은 것은?", options: ["급하다", "침착하다", "소란하다", "활달하다"], answer: 1, type: "유의어" },
             { question: "'햇빛이 강하다'의 '강하다'와 '바람이 세다'의 '강하다'의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
-            { question: "바다에 던지는 '닻'과 나이를 세는 '살'의 충청도 방언 '닻'의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
+            { question: "배를 정박시키는 '닻'과 나이를 세는 단어의 충청 방언 '닻'의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
             { question: "'영리하다'의 유의어로 알맞은 것은?", options: ["똑똑하다", "착하다", "순진하다", "점잖다"], answer: 0, type: "유의어" },
             { question: "'넓다'의 반의어로 가장 알맞은 것은?", options: ["좁다", "낮다", "얇다", "작다"], answer: 0, type: "반의어" },
             { question: "'슬픔'의 반의어로 가장 알맞은 단어는?", options: ["기쁨", "감동", "외로움", "평화"], answer: 0, type: "반의어" },
             { question: "'거대하다'의 유의어로 가장 알맞은 것은?", options: ["웅장하다", "막대하다", "커다랗다", "광활하다"], answer: 2, type: "유의어" },
-            { question: "구멍을 '파다'와 파란색의 '파다'는 어떤 관계일까요?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
+            { question: "구멍을 '파다'와 채소인 '파'에 조사 '다'가 붙은 형태의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
             { question: "'옷을 입다'의 '입다'와 '손해를 입다'의 '입다'는 무슨 관계?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
             { question: "'단단하다'의 반의어로 알맞은 것은?", options: ["물렁하다", "연하다", "부드럽다", "약하다"], answer: 0, type: "반의어" },
             { question: "'영원하다'의 유의어로 가장 알맞은 것은?", options: ["꾸준하다", "영구적이다", "지속되다", "길다"], answer: 1, type: "유의어" },
@@ -634,7 +733,7 @@
             { question: "'거짓'의 반의어로 가장 알맞은 단어는?", options: ["참", "진실", "사실", "솔직"], answer: 0, type: "반의어" },
             { question: "'온화하다'의 유의어로 가장 알맞은 성품은?", options: ["따뜻하다", "차분하다", "온순하다", "너그럽다"], answer: 2, type: "유의어" },
             { question: "'귀중하다'의 유의어로 가장 알맞은 것은?", options: ["귀하다", "소중하다", "특별하다", "비싸다"], answer: 1, type: "유의어" },
-            { question: "화장실의 '변'과 한자 날 '변'의 관계는 무슨 관계일까요?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
+            { question: "신체적 '변'과 한자 날 '변'의 관계는 무슨 관계일까요?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
             { question: "'뿌리를 내리다'의 '뿌리'와 '문제의 근원'을 뜻하는 '뿌리'의 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
             { question: "'유익하다'의 반의어로 가장 알맞은 단어는?", options: ["해롭다", "나쁘다", "쓸모없다", "부족하다"], answer: 0, type: "반의어" },
             { question: "'수집하다'의 유의어로 가장 알맞은 행동은?", options: ["정리하다", "모으다", "찾아내다", "간직하다"], answer: 1, type: "유의어" },
@@ -646,101 +745,111 @@
             { question: "'영광'의 반의어로 가장 알맞은 감정이나 상황은?", options: ["슬픔", "치욕", "좌절", "실패"], answer: 1, type: "반의어" },
             { question: "물건을 '사다'와 사람의 환심을 '사다'의 언어적 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
             { question: "과일의 '살'과 생물의 '살'은 어떤 관계일까요?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 3, type: "다의어" },
-            { question: "바다의 '김'과 밥에 싸 먹는 '김'의 낱말 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
+            { question: "바다의 마르는 '김'과 밥에 싸 먹는 '김'의 낱말 관계는?", options: ["유의어", "반의어", "동음이의어", "다의어"], answer: 2, type: "동음이의어" },
             { question: "'신중하다'의 반의어로 가장 알맞은 태도는?", options: ["경솔하다", "가볍다", "급하다", "무책임하다"], answer: 0, type: "반의어" },
             { question: "'완벽하다'의 유의어로 가장 알맞은 상태는?", options: ["정확하다", "훌륭하다", "흠잡을 데 없다", "깨끗하다"], answer: 2, type: "유의어" }
         ];
 
-        // --- GAME ENGINE CONFIG ---
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-
-        const TILE_SIZE = 50;
-        const MAP_COLS = 16;
-        const MAP_ROWS = 10;
-
-        let gameState = {
-            life: 20,
-            gold: 200,
-            wave: 1,
-            combo: 0,
-            solvedCount: 0, 
-            selectedMap: 0,
-            gameSpeed: 1,
-            isWaveActive: false,
-            selectedShopItem: null,
-            selectedPlacedTower: null,
-            storedBuffTime: 0,  // 밀려있는 버프 시간(초 단위) -> 웨이브 시작시 발동됨!
-            activeBuffTimer: 0, // 현재 웨이브에서 실시간 구동중인 버프 프레임 수
-            towers: [],
-            monsters: [],
-            projectiles: [],
-            explosions: [], // 타격감 펑펑 이펙트 저장고
-            currentQuiz: null
-        };
-
-        const maps = [
-            [[0,2], [5,2], [5,7], [10,7], [10,3], [15,3]],
-            [[0,4], [3,4], [3,1], [8,1], [8,8], [12,8], [12,4], [15,4]],
-            [[0,1], [14,1], [14,8], [2,8], [2,3], [11,3], [11,6], [5,6], [5,5], [15,5]],
-            [[0,5], [3,5], [3,3], [12,3], [12,5], [15,5]]
+        // --- 맵 데이터 구조 (Grid 행/열 위치 정의) ---
+        const mapLayouts = [
+            // 0: 쉬움
+            [[0,2], [1,2], [2,2], [3,2], [4,2], [5,2], [5,3], [5,4], [5,5], [5,6], [5,7], [6,7], [7,7], [8,7], [9,7], [10,7], [10,6], [10,5], [10,4], [10,3], [11,3], [12,3], [13,3], [14,3], [15,3]],
+            // 1: 보통
+            [[0,4], [1,4], [2,4], [3,4], [3,3], [3,2], [3,1], [4,1], [5,1], [6,1], [7,1], [8,1], [8,2], [8,3], [8,4], [8,5], [8,6], [8,7], [8,8], [9,8], [10,8], [11,8], [12,8], [12,7], [12,6], [12,5], [12,4], [13,4], [14,4], [15,4]],
+            // 2: 어려움
+            [[0,1], [1,1], [2,1], [3,1], [4,1], [5,1], [6,1], [7,1], [8,1], [9,1], [10,1], [11,1], [12,1], [13,1], [14,1], [14,2], [14,3], [14,4], [14,5], [14,6], [14,7], [14,8], [13,8], [12,8], [11,8], [10,8], [9,8], [8,8], [7,8], [6,8], [5,8], [4,8], [3,8], [2,8], [2,7], [2,6], [2,5], [2,4], [2,3], [3,3], [4,3], [5,3], [6,3], [7,3], [8,3], [9,3], [10,3], [11,3], [11,4], [11,5], [11,6], [10,6], [9,6], [8,6], [7,6], [6,6], [5,6], [5,5], [6,5], [7,5], [8,5], [9,5], [12,5], [13,5], [14,5], [15,5]],
+            // 3: 지옥
+            [[0,5], [1,5], [2,5], [3,5], [3,4], [3,3], [4,3], [5,3], [6,3], [7,3], [8,3], [9,3], [10,3], [11,3], [12,3], [12,4], [12,5], [13,5], [14,5], [15,5]]
         ];
 
-        let activePathPoints = [];
-
-        const TOWER_TYPES = {
-            arrow: { name: "화살 타워", cost: 100, range: 125, damage: 14, cooldown: 25, color: '#4ecca3', emoji: '🏹', type: 'arrow' },
-            ice: { name: "얼음 타워", cost: 150, range: 105, damage: 8, cooldown: 35, color: '#00bcd4', emoji: '❄️', type: 'ice' },
-            bomb: { name: "폭탄 타워", cost: 250, range: 155, damage: 28, cooldown: 65, color: '#ff9800', emoji: '💣', type: 'bomb' }
+        const TOWER_SPECS = {
+            arrow: { name: "화살 타워", cost: 100, range: 130, damage: 14, cooldown: 25, color: 'linear-gradient(135deg, #4ecca3, #2b9375)', emoji: '🏹' },
+            ice: { name: "얼음 타워", cost: 150, range: 110, damage: 8, cooldown: 35, color: 'linear-gradient(135deg, #00bcd4, #007c91)', emoji: '❄️' },
+            bomb: { name: "폭탄 타워", cost: 250, range: 160, damage: 30, cooldown: 65, color: 'linear-gradient(135deg, #ff9800, #c66900)', emoji: '💣' }
         };
 
         const UPGRADE_COSTS = [100, 150, 250, 400, 600];
-        const monsterEmojis = ['👾', '👻', '👹', '🦊', '🐸', '🦉', '🦁'];
+        const monsterEmojis = ['👾', '👻', '🦊', '🐸', '🦉', '🦁'];
+
+        let state = {
+            life: 20, gold: 200, wave: 1, combo: 0, solvedCount: 0,
+            selectedMap: 0, gameSpeed: 1, isWaveActive: false,
+            selectedShopItem: null, selectedPlacedTower: null,
+            storedBuffTime: 0, activeBuffTimer: 0,
+            towers: [], monsters: [], projectiles: [], currentQuiz: null, idCounter: 0
+        };
+
+        // --- 맵 구조판 그리기 (HTML DOM 사전에 꽉 채우기) ---
+        function initBoard() {
+            const board = document.getElementById('game-board');
+            board.innerHTML = '';
+            
+            const pathTiles = mapLayouts[state.selectedMap];
+
+            for (let r = 0; r < MAP_ROWS; r++) {
+                for (let c = 0; c < MAP_COLS; c++) {
+                    const tile = document.createElement('div');
+                    tile.classList.add('tile');
+                    tile.dataset.row = r;
+                    tile.dataset.col = c;
+
+                    // 오솔길 여부 체크
+                    const isPath = pathTiles.some(p => p[0] === c && p[1] === r);
+                    if (isPath) {
+                        tile.classList.add('path-tile');
+                    } else {
+                        // 일반 잔디밭 타일 중 무작위 요소로 나무🌲나 바위🪨 장식 깔기
+                        if (Math.random() < 0.08 && !(c===0 && r===0)) {
+                            tile.innerText = Math.random() < 0.6 ? '🌲' : '🪨';
+                            tile.style.opacity = '0.85';
+                        }
+                    }
+
+                    // 타일 클릭 리스너 연결
+                    tile.addEventListener('click', () => handleTileClick(c, r));
+                    board.appendChild(tile);
+                }
+            }
+        }
 
         function startGame(mapIndex) {
-            gameState.selectedMap = mapIndex;
-            activePathPoints = convertGridToPixels(maps[mapIndex]);
+            state.selectedMap = mapIndex;
+            initBoard();
             
             document.getElementById('lobby-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
             
             updateUI();
             loadNewQuiz();
-            gameLoop();
+            setInterval(MainEngineTick, 30); // 30ms 주기로 프레임 구동 (약 33fps)
         }
 
-        function convertGridToPixels(gridPoints) {
-            return gridPoints.map(p => ({ x: p[0] * TILE_SIZE + TILE_SIZE/2, y: p[1] * TILE_SIZE + TILE_SIZE/2 }));
-        }
-
-        // --- QUIZ AND WAVE LOCK LOGIC ---
+        // --- QUIZ & BUFFERED REWARD SYSTEM ---
         function loadNewQuiz() {
             const randomIndex = Math.floor(Math.random() * quizDatabase.length);
-            gameState.currentQuiz = quizDatabase[randomIndex];
+            state.currentQuiz = quizDatabase[randomIndex];
 
-            document.getElementById('quiz-type').innerText = gameState.currentQuiz.type;
-            document.getElementById('quiz-question').innerText = gameState.currentQuiz.question;
+            document.getElementById('quiz-type').innerText = state.currentQuiz.type;
+            document.getElementById('quiz-question').innerText = state.currentQuiz.question;
 
             const optionButtons = document.querySelectorAll('.quiz-options .option-btn');
-            gameState.currentQuiz.options.forEach((opt, idx) => {
+            state.currentQuiz.options.forEach((opt, idx) => {
                 optionButtons[idx].innerText = `${idx + 1}. ${opt}`;
                 optionButtons[idx].disabled = false;
             });
         }
 
         function submitAnswer(idx) {
-            // 정답 확인 후 임시 잠금
-            const optionButtons = document.querySelectorAll('.quiz-options .option-btn');
-            optionButtons.forEach(btn => btn.disabled = true);
+            document.querySelectorAll('.quiz-options .option-btn').forEach(btn => btn.disabled = true);
 
-            if (idx === gameState.currentQuiz.answer) {
-                gameState.combo += 1;
-                gameState.solvedCount += 1;
+            if (idx === state.currentQuiz.answer) {
+                state.combo += 1;
+                state.solvedCount += 1;
                 showChestOverlay();
             } else {
-                gameState.combo = 0;
-                gameState.solvedCount += 1;
-                alert("아쉽습니다! 오답입니다. 다음 문제를 계속 풀어 수호에너지를 채우세요.");
+                state.combo = 0;
+                state.solvedCount += 1;
+                alert("오답입니다! 다음 문제를 연마하여 기지에 에너지를 채우세요.");
                 checkWaveCondition();
                 loadNewQuiz();
             }
@@ -748,16 +857,13 @@
         }
 
         function checkWaveCondition() {
-            if (gameState.solvedCount >= 5) {
-                const waveBtn = document.getElementById('wave-btn');
-                waveBtn.disabled = false;
-                waveBtn.innerText = `웨이브 시작 (준비 완료)`;
-                waveBtn.style.background = "#5cdb95";
-                waveBtn.style.color = "#1a1a2e";
+            if (state.solvedCount >= 5) {
+                const btn = document.getElementById('wave-btn');
+                btn.disabled = false;
+                btn.innerText = `웨이브 시작 (활성화)`;
             }
         }
 
-        // --- CHEST REWARD BUFFERED SYSTEM ---
         function showChestOverlay() {
             document.getElementById('reward-result').innerText = "";
             document.getElementById('chest-close-btn').style.display = "none";
@@ -765,28 +871,23 @@
             document.getElementById('chest-overlay').style.display = 'flex';
         }
 
-        function openChest(chestIdx) {
+        function openChest(idx) {
             document.querySelectorAll('.chest').forEach(c => c.style.pointerEvents = 'none');
-
             const roll = Math.random();
-            let resultText = "";
-            let comboBonus = Math.floor(gameState.combo * 6);
+            let msg = "";
+            let bonus = state.combo * 5;
 
             if (roll < 0.35) {
-                let goldGained = 100 + comboBonus;
-                gameState.gold += goldGained;
-                resultText = `💰 골드 대박! +${goldGained} 골드를 창고에 보관합니다.`;
+                state.gold += (100 + bonus);
+                msg = `💰 일반 보상 보관함 적립! +${100 + bonus} 골드 달성!`;
             } else if (roll < 0.65) {
-                let goldGained = 250 + comboBonus;
-                gameState.gold += goldGained;
-                resultText = `💎 메가 골드 대박! +${goldGained} 골드를 창고에 보관합니다.`;
+                state.gold += (250 + bonus);
+                msg = `💎 메가 행운 상자 적립! +${250 + bonus} 골드 달성!`;
             } else {
-                // 핵심수정: 즉시 발동하지 않고 예약 적립 (10초 추가)
-                gameState.storedBuffTime += 10;
-                resultText = `⚡ 공속 2배 버프 획득! 다음 웨이브가 시작되면 10초간 자동 발동됩니다!`;
+                state.storedBuffTime += 10; // 버프 누적 보관!
+                msg = `⚡ 초강력 공속 버프 예약! 다음 웨이브가 펼쳐지면 10초간 자동 가동됩니다!`;
             }
-
-            document.getElementById('reward-result').innerText = resultText;
+            document.getElementById('reward-result').innerText = msg;
             document.getElementById('chest-close-btn').style.display = "inline-block";
             updateUI();
         }
@@ -797,471 +898,430 @@
             loadNewQuiz();
         }
 
-        // --- SHOP & SELECTION ---
+        // --- INTERACTION & PLACEMENT ENGINE ---
         function selectShopItem(type) {
-            if (gameState.selectedShopItem === type) {
-                gameState.selectedShopItem = null;
+            if (state.selectedShopItem === type) {
+                state.selectedShopItem = null;
             } else {
-                gameState.selectedShopItem = type;
-                gameState.selectedPlacedTower = null;
+                state.selectedShopItem = type;
+                state.selectedPlacedTower = null;
             }
+            hideRangeGuide();
             updateUI();
         }
 
-        canvas.addEventListener('click', function(e) {
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+        function handleTileClick(c, r) {
+            // 1. 상점 아이템이 선택된 상태라면 배치 시도
+            if (state.selectedShopItem) {
+                const spec = TOWER_SPECS[state.selectedShopItem];
+                if (isTileOnPath(c, r)) {
+                    alert("요괴가 지나다니는 흙길 위에는 타워를 지을 수 없습니다!");
+                    return;
+                }
+                if (state.towers.some(t => t.cx === c && t.cy === r)) {
+                    alert("이미 방어 시설이 구축된 타일입니다.");
+                    return;
+                }
+                if (state.gold < spec.cost) {
+                    alert("연구 자금(골드)이 부족합니다.");
+                    return;
+                }
 
-            const tileX = Math.floor(mouseX / TILE_SIZE);
-            const tileY = Math.floor(mouseY / TILE_SIZE);
-
-            if (gameState.selectedShopItem) {
-                const spec = TOWER_TYPES[gameState.selectedShopItem];
+                state.gold -= spec.cost;
+                const id = 'tower_' + state.idCounter++;
                 
-                if (isTileOnPath(tileX, tileY)) {
-                    alert("흙길 위에는 타워를 설치할 수 없습니다!");
-                    return;
-                }
+                // DOM 객체 생성 및 격자 배치
+                const towerEl = document.createElement('div');
+                towerEl.id = id;
+                towerEl.classList.add('tower-obj');
+                towerEl.style.background = spec.color;
+                towerEl.style.left = `${c * TILE_SIZE + TILE_SIZE/2}px`;
+                towerEl.style.top = `${r * TILE_SIZE + TILE_SIZE/2}px`;
+                towerEl.innerText = spec.emoji;
 
-                const occupied = gameState.towers.some(t => t.tileX === tileX && t.tileY === tileY);
-                if (occupied) {
-                    alert("이미 타워가 배치된 곳입니다.");
-                    return;
-                }
+                const badge = document.createElement('div');
+                badge.classList.add('tower-level-badge');
+                badge.id = id + '_badge';
+                badge.innerText = `Lv.1`;
+                towerEl.appendChild(badge);
 
-                if (gameState.gold < spec.cost) {
-                    alert("골드가 모자랍니다!");
-                    return;
-                }
+                document.getElementById('game-board').appendChild(towerEl);
 
-                gameState.gold -= spec.cost;
-                gameState.towers.push({
-                    tileX: tileX, tileY: tileY,
-                    x: tileX * TILE_SIZE + TILE_SIZE/2,
-                    y: tileY * TILE_SIZE + TILE_SIZE/2,
-                    type: spec.type, level: 1,
-                    range: spec.range, damage: spec.damage,
-                    cooldown: spec.cooldown, currentCooldown: 0,
-                    spec: spec, pulseScale: 1 // 애니메이션 스케일 요소
+                const newTower = {
+                    id: id, cx: c, cy: r,
+                    x: c * TILE_SIZE + TILE_SIZE/2, y: r * TILE_SIZE + TILE_SIZE/2,
+                    type: state.selectedShopItem, level: 1,
+                    range: spec.range, damage: spec.damage, cooldown: spec.cooldown,
+                    currentCooldown: 0, spec: spec, el: towerEl
+                };
+
+                // 클릭해서 정보 조회 기능 연결
+                towerEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    state.selectedPlacedTower = newTower;
+                    showRangeGuide(newTower);
+                    updateUI();
                 });
 
-                gameState.selectedShopItem = null;
+                state.towers.push(newTower);
+                state.selectedShopItem = null;
                 updateUI();
                 return;
             }
 
-            const clickedTower = gameState.towers.find(t => t.tileX === tileX && t.tileY === tileY);
-            gameState.selectedPlacedTower = clickedTower ? clickedTower : null;
+            // 빈 잔디밭 선택 시 디테일 패널 비활성화
+            state.selectedPlacedTower = null;
+            hideRangeGuide();
             updateUI();
-        });
+        }
 
-        function isTileOnPath(tx, ty) {
-            const currentMapLayout = maps[gameState.selectedMap];
-            for (let i = 0; i < currentMapLayout.length - 1; i++) {
-                let p1 = currentMapLayout[i];
-                let p2 = currentMapLayout[i+1];
-                let minX = Math.min(p1[0], p2[0]), maxX = Math.max(p1[0], p2[0]);
-                let minY = Math.min(p1[1], p2[1]), maxY = Math.max(p1[1], p2[1]);
-                if (tx >= minX && tx <= maxX && ty >= minY && ty <= maxY) return true;
-            }
-            return false;
+        function showRangeGuide(tower) {
+            const guide = document.getElementById('range-guide');
+            guide.style.width = `${tower.range * 2}px`;
+            guide.style.height = `${tower.range * 2}px`;
+            guide.style.left = `${tower.x}px`;
+            guide.style.top = `${tower.y}px`;
+            guide.style.display = 'block';
+        }
+
+        function hideRangeGuide() {
+            document.getElementById('range-guide').style.display = 'none';
         }
 
         function upgradeSelectedTower() {
-            const tower = gameState.selectedPlacedTower;
-            if (!tower || tower.level >= 5) return;
+            const t = state.selectedPlacedTower;
+            if (!t || t.level >= 5) return;
 
-            const cost = UPGRADE_COSTS[tower.level - 1];
-            if (gameState.gold < cost) {
-                alert("골드가 부족합니다!");
+            const cost = UPGRADE_COSTS[t.level - 1];
+            if (state.gold < cost) {
+                alert("골드가 모자랍니다!");
                 return;
             }
 
-            gameState.gold -= cost;
-            tower.level += 1;
-            tower.damage = Math.round(tower.damage * 1.35);
-            tower.range = Math.round(tower.range * 1.15);
+            state.gold -= cost;
+            t.level += 1;
+            t.damage = Math.round(t.damage * 1.35);
+            t.range = Math.round(t.range * 1.15);
+
+            document.getElementById(t.id + '_badge').innerText = `Lv.${t.level}`;
+            if (t.level === 5) {
+                t.el.classList.add('max-level');
+            }
+            showRangeGuide(t);
             updateUI();
         }
 
         function toggleSpeed() {
-            if (gameState.gameSpeed === 1) gameState.gameSpeed = 2;
-            else if (gameState.gameSpeed === 2) gameState.gameSpeed = 4;
-            else gameState.gameSpeed = 1;
-            document.getElementById('speed-btn').innerText = `배속: ${gameState.gameSpeed}x`;
+            if (state.gameSpeed === 1) state.gameSpeed = 2;
+            else if (state.gameSpeed === 2) state.gameSpeed = 3;
+            else state.gameSpeed = 1;
+            document.getElementById('speed-btn').innerText = `배속: ${state.gameSpeed}x`;
         }
 
-        // --- WAVE START (버프 적용 시점 변경) ---
+        // --- WAVE SPAWN CONTROL ---
         function startWave() {
-            if (gameState.isWaveActive) return;
-            
-            // 퀴즈 잠금 해제 및 조건 초기화
-            gameState.isWaveActive = true;
-            gameState.solvedCount = 0; 
-            
-            const waveBtn = document.getElementById('wave-btn');
-            waveBtn.disabled = true;
-            waveBtn.innerText = `전투 진행 중...`;
+            if (state.isWaveActive) return;
+            state.isWaveActive = true;
+            state.solvedCount = 0;
 
-            // 핵심수정: 웨이브가 시작하는 '이 순간' 적립되어 있던 버프 수혈
-            if (gameState.storedBuffTime > 0) {
-                gameState.activeBuffTimer += gameState.storedBuffTime * 60; // 초를 프레임으로 환산
-                gameState.storedBuffTime = 0;
+            const btn = document.getElementById('wave-btn');
+            btn.disabled = true;
+            btn.innerText = `격전 중...`;
+
+            // 핵심수정: 웨이브 오픈되는 찰나에 적립고에 쌓인 버프 주입
+            if (state.storedBuffTime > 0) {
+                state.activeBuffTimer += state.storedBuffTime * 33; // 33fps 기준 환산
+                state.storedBuffTime = 0;
             }
 
-            let count = 5;
-            let isBossWave = (gameState.wave % 5 === 0);
-            let baseHp = 35 * Math.pow(1.5, gameState.wave - 1);
-            let speed = 1.3;
+            let isBossWave = (state.wave % 5 === 0);
+            let baseHp = 35 * Math.pow(1.5, state.wave - 1);
+            const pathTiles = mapLayouts[state.selectedMap];
+            const quizTypes = ["유의어", "반의어", "동음이의어", "다의어"];
 
             if (isBossWave) {
-                gameState.monsters.push({
-                    x: activePathPoints[0].x, y: activePathPoints[0].y,
-                    pathIndex: 0, hp: baseHp * 11, maxHp: baseHp * 11,
-                    speed: speed * 0.45, size: 28, isBoss: true, slowTimer: 0,
-                    emoji: '👹', weakness: "다의어"
-                });
+                spawnMonster(pathTiles, baseHp * 10, true, '👹', '다의어');
             } else {
-                let delay = 0;
-                const types = ["유의어", "반의어", "동음이의어", "다의어"];
-                for (let i = 0; i < count; i++) {
-                    setTimeout(() => {
-                        if (!gameState.isWaveActive) return;
-                        let randomEmoji = monsterEmojis[Math.floor(Math.random() * monsterEmojis.length)];
-                        gameState.monsters.push({
-                            x: activePathPoints[0].x, y: activePathPoints[0].y,
-                            pathIndex: 0, hp: baseHp, maxHp: baseHp,
-                            speed: speed, size: 16, isBoss: false, slowTimer: 0,
-                            emoji: randomEmoji, weakness: types[Math.floor(Math.random() * types.length)]
-                        });
-                    }, delay);
-                    delay += 900 / gameState.gameSpeed;
-                }
+                let spawned = 0;
+                let timerId = setInterval(() => {
+                    if (spawned >= 5) {
+                        clearInterval(timerId);
+                        return;
+                    }
+                    let rEmoji = monsterEmojis[Math.floor(Math.random() * monsterEmojis.length)];
+                    let rWeak = quizTypes[Math.floor(Math.random() * quizTypes.length)];
+                    spawnMonster(pathTiles, baseHp, false, rEmoji, rWeak);
+                    spawned++;
+                }, 800 / state.gameSpeed);
             }
             updateUI();
         }
 
-        // --- MAIN ENGINE GAME FRAME LOOP ---
-        function gameLoop() {
-            for (let step = 0; step < gameState.gameSpeed; step++) {
-                updateGameFrame();
-            }
-            renderGameFrame();
+        function spawnMonster(path, hp, isBoss, emoji, weakness) {
+            const id = 'monster_' + state.idCounter++;
+            const mEl = document.createElement('div');
+            mEl.id = id;
+            mEl.classList.add('monster-obj');
+            mEl.innerText = emoji;
+            if (isBoss) mEl.style.fontSize = '3.2rem';
 
-            if (gameState.life <= 0) {
-                endGame();
-                return;
-            }
-            requestAnimationFrame(gameLoop);
+            // 구조 바 생성
+            const hpBar = document.createElement('div');
+            hpBar.classList.add('monster-hp-bar');
+            const hpFill = document.createElement('div');
+            hpFill.id = id + '_hp';
+            hpFill.classList.add('monster-hp-fill');
+            hpBar.appendChild(hpFill);
+            mEl.appendChild(hpBar);
+
+            // 약점 태그 부착
+            const weakTag = document.createElement('div');
+            weakTag.classList.add('monster-weakness');
+            weakTag.innerText = `약점:${weakness}`;
+            mEl.appendChild(weakTag);
+
+            // 시작 좌표 설정
+            const startNode = path[0];
+            mEl.style.left = `${startNode[0] * TILE_SIZE + TILE_SIZE/2}px`;
+            mEl.style.top = `${startNode[1] * TILE_SIZE + TILE_SIZE/2}px`;
+
+            document.getElementById('game-board').appendChild(mEl);
+
+            state.monsters.push({
+                id: id, pathIndex: 0, hp: hp, maxHp: hp, isBoss: isBoss,
+                weakness: weakness, emoji: emoji, el: mEl, slowTimer: 0,
+                x: startNode[0] * TILE_SIZE + TILE_SIZE/2,
+                y: startNode[1] * TILE_SIZE + TILE_SIZE/2
+            });
         }
 
-        function updateGameFrame() {
-            // 버프 차감 연산
-            if (gameState.activeBuffTimer > 0) {
-                gameState.activeBuffTimer--;
+        // --- CORE REAL-TIME LOGIC ENGINE ---
+        function MainEngineTick() {
+            // 배속 가중치 루프
+            for (let k = 0; k < state.gameSpeed; k++) {
+                updateFrameLogic();
+            }
+        }
+
+        function updateFrameLogic() {
+            if (state.activeBuffTimer > 0) {
+                state.activeBuffTimer--;
                 document.getElementById('buff-indicator').style.display = 'block';
             } else {
                 document.getElementById('buff-indicator').style.display = 'none';
             }
 
-            // 타워 공격 크기 복원 처리 (타격감 복원 피드백)
-            gameState.towers.forEach(t => {
-                if (t.pulseScale > 1) t.pulseScale -= 0.04;
-            });
+            const path = mapLayouts[state.selectedMap];
 
-            // 이펙트 파티클 생명주기 관리
-            for (let i = gameState.explosions.length - 1; i >= 0; i--) {
-                gameState.explosions[i].life--;
-                if (gameState.explosions[i].life <= 0) gameState.explosions.splice(i, 1);
-            }
-
-            // 몬스터 위치 이동
-            for (let i = gameState.monsters.length - 1; i >= 0; i--) {
-                let m = gameState.monsters[i];
-                let currentSpeed = m.speed;
+            // 1. 요괴 이동 처리
+            for (let i = state.monsters.length - 1; i >= 0; i--) {
+                let m = state.monsters[i];
+                let speed = m.isBoss ? 0.7 : 1.4;
                 if (m.slowTimer > 0) {
                     m.slowTimer--;
-                    currentSpeed *= 0.5;
+                    speed *= 0.5;
                 }
 
-                let target = activePathPoints[m.pathIndex + 1];
-                if (!target) {
-                    gameState.life -= (m.isBoss ? 5 : 1);
-                    gameState.monsters.splice(i, 1);
+                let targetIdx = m.pathIndex + 1;
+                if (targetIdx >= path.length) {
+                    // 성문 침투 성벽 붕괴
+                    state.life -= (m.isBoss ? 5 : 1);
+                    m.el.remove();
+                    state.monsters.splice(i, 1);
                     updateUI();
                     checkWaveEnd();
                     continue;
                 }
 
-                let dx = target.x - m.x, dy = target.y - m.y;
+                let targetNode = path[targetIdx];
+                let targetX = targetNode[0] * TILE_SIZE + TILE_SIZE/2;
+                let targetY = targetNode[1] * TILE_SIZE + TILE_SIZE/2;
+
+                let dx = targetX - m.x;
+                let dy = targetY - m.y;
                 let dist = Math.sqrt(dx*dx + dy*dy);
 
-                if (dist <= currentSpeed) {
-                    m.x = target.x; m.y = target.y;
+                if (dist <= speed) {
+                    m.x = targetX; m.y = targetY;
                     m.pathIndex++;
                 } else {
-                    m.x += (dx / dist) * currentSpeed;
-                    m.y += (dy / dist) * currentSpeed;
+                    m.x += (dx / dist) * speed;
+                    m.y += (dy / dist) * speed;
                 }
+
+                // CSS 렌더링 반영
+                m.el.style.left = `${m.x}px`;
+                m.el.style.top = `${m.y}px`;
             }
 
-            // 타워 타겟 탐색 및 발사 알고리즘
-            gameState.towers.forEach(t => {
+            // 2. 타워 쿨다운 확인 및 사격 개시 AI
+            state.towers.forEach(t => {
                 if (t.currentCooldown > 0) {
-                    t.currentCooldown -= (gameState.activeBuffTimer > 0 ? 2 : 1);
+                    t.currentCooldown -= (state.activeBuffTimer > 0 ? 2 : 1);
                     return;
                 }
 
                 let targetMonster = null;
-                for (let m of gameState.monsters) {
-                    let tdx = m.x - t.x, tdy = m.y - t.y;
-                    if (Math.sqrt(tdx*tdx + tdy*tdy) <= t.range) {
+                for (let m of state.monsters) {
+                    let distance = Math.sqrt((m.x - t.x)**2 + (m.y - t.y)**2);
+                    if (distance <= t.range) {
                         targetMonster = m;
                         break;
                     }
                 }
 
                 if (targetMonster) {
-                    t.pulseScale = 1.3; // 발사 타격 이펙트 모션 ON
-                    gameState.projectiles.push({
-                        x: t.x, y: t.y, target: targetMonster,
-                        speed: 6.5, damage: t.damage, type: t.type, level: t.level
+                    // 둠칫 타워 발사 모션 CSS 클래스 토글링 트리거
+                    t.el.classList.remove('tower-shoot-anim');
+                    void t.el.offsetWidth; // DOM 강제 리플로우 유발
+                    t.el.classList.add('tower-shoot-anim');
+
+                    // 투사체 DOM 엘리먼트 동적 빌드
+                    const pId = 'proj_' + state.idCounter++;
+                    const pEl = document.createElement('div');
+                    pEl.id = pId;
+                    pEl.classList.add('projectile-obj');
+                    pEl.style.left = `${t.x}px`;
+                    pEl.style.top = `${t.y}px`;
+                    pEl.style.background = t.type === 'ice' ? '#00bcd4' : t.type === 'bomb' ? '#ff9800' : '#ffffff';
+                    document.getElementById('game-board').appendChild(pEl);
+
+                    state.projectiles.push({
+                        id: pId, x: t.x, y: t.y, target: targetMonster, el: pEl,
+                        speed: 7, damage: t.damage, type: t.type
                     });
                     t.currentCooldown = t.cooldown;
                 }
             });
 
-            // 투사체 충돌 판정
-            for (let i = gameState.projectiles.length - 1; i >= 0; i--) {
-                let p = p = gameState.projectiles[i];
-                if (!gameState.monsters.includes(p.target)) {
-                    gameState.projectiles.splice(i, 1);
+            // 3. 투사체 궤적 추적 연산
+            for (let i = state.projectiles.length - 1; i >= 0; i--) {
+                let p = state.projectiles[i];
+                if (!state.monsters.includes(p.target)) {
+                    p.el.remove();
+                    state.projectiles.splice(i, 1);
                     continue;
                 }
 
-                let pdx = p.target.x - p.x, pdy = p.target.y - p.y;
+                let pdx = p.target.x - p.x;
+                let pdy = p.target.y - p.y;
                 let pdist = Math.sqrt(pdx*pdx + pdy*pdy);
 
                 if (pdist <= p.speed) {
-                    let totalDamage = p.damage;
-                    if (p.target.weakness === gameState.currentQuiz.type) {
-                        totalDamage = Math.round(totalDamage * 1.5);
+                    // 🎯 충돌 성공! 데미지 가산 산출
+                    let finalDmg = p.damage;
+                    if (p.target.weakness === state.currentQuiz.type) {
+                        finalDmg = Math.round(finalDmg * 1.5);
                     }
 
-                    p.target.hp -= totalDamage;
+                    p.target.hp -= finalDmg;
 
-                    // 💥 충돌 펑 애니메이션 파티클 생성
-                    gameState.explosions.push({
-                        x: p.target.x, y: p.target.y,
-                        radius: p.type === 'bomb' ? 35 : 15,
-                        color: p.type === 'ice' ? 'rgba(0,188,212,0.7)' : p.type === 'bomb' ? 'rgba(255,87,34,0.8)' : 'rgba(255,255,255,0.7)',
-                        life: 12
-                    });
+                    // 💥 CSS 펑 타격감 이펙트 엘리먼트 가동
+                    createHitEffect(p.target.x, p.target.y);
 
                     if (p.type === 'ice') {
-                        p.target.slowTimer = 180;
+                        p.target.slowTimer = 150;
                     } else if (p.type === 'bomb') {
-                        gameState.monsters.forEach(m_splash => {
-                            if (m_splash !== p.target) {
-                                let sdx = m_splash.x - p.target.x, sdy = m_splash.y - p.target.y;
-                                if (Math.sqrt(sdx*sdx + sdy*sdy) <= 80) {
-                                    m_splash.hp -= Math.round(totalDamage * 0.6);
-                                    gameState.explosions.push({ x: m_splash.x, y: m_splash.y, radius: 15, color: 'rgba(255,152,0,0.5)', life: 8 });
+                        // 광역 스플래시 데미지 유발
+                        state.monsters.forEach(other => {
+                            if (other !== p.target) {
+                                let distToSplash = Math.sqrt((other.x - p.target.x)**2 + (other.y - p.target.y)**2);
+                                if (distToSplash <= 75) {
+                                    other.hp -= Math.round(finalDmg * 0.6);
+                                    createHitEffect(other.x, other.y);
                                 }
                             }
                         });
                     }
 
+                    // 체력바 갱신
+                    const hpFill = document.getElementById(p.target.id + '_hp');
+                    if (hpFill) {
+                        let ratio = Math.max(0, p.target.hp / p.target.maxHp);
+                        hpFill.style.width = `${ratio * 100}%`;
+                    }
+
+                    // 몬스터 전멸 소멸 연산
                     if (p.target.hp <= 0) {
-                        let idx = gameState.monsters.indexOf(p.target);
-                        if (idx > -1) {
-                            gameState.monsters.splice(idx, 1);
-                            gameState.gold += (p.target.isBoss ? 60 : 12);
+                        let mIdx = state.monsters.indexOf(p.target);
+                        if (mIdx > -1) {
+                            p.target.el.remove();
+                            state.monsters.splice(mIdx, 1);
+                            state.gold += (p.target.isBoss ? 60 : 15);
                             updateUI();
                         }
                     }
 
-                    gameState.projectiles.splice(i, 1);
+                    p.el.remove();
+                    state.projectiles.splice(i, 1);
                     checkWaveEnd();
                 } else {
                     p.x += (pdx / pdist) * p.speed;
                     p.y += (pdy / pdist) * p.speed;
+                    p.el.style.left = `${p.x}px`;
+                    p.el.style.top = `${p.y}px`;
                 }
             }
         }
 
+        function createHitEffect(x, y) {
+            const hEl = document.createElement('div');
+            hEl.classList.add('hit-effect');
+            hEl.innerText = '💥';
+            hEl.style.left = `${x}px`;
+            hEl.style.top = `${y}px`;
+            document.getElementById('game-board').appendChild(hEl);
+            setTimeout(() => hEl.remove(), 250);
+        }
+
         function checkWaveEnd() {
-            if (gameState.monsters.length === 0 && gameState.isWaveActive) {
-                gameState.isWaveActive = false;
-                gameState.wave += 1;
-                
-                const waveBtn = document.getElementById('wave-btn');
-                waveBtn.innerText = `5문제를 푸세요`;
-                waveBtn.style.background = "#4a5068";
-                waveBtn.style.color = "#8a90a8";
+            if (state.monsters.length === 0 && state.isWaveActive) {
+                state.isWaveActive = false;
+                state.wave += 1;
+                const btn = document.getElementById('wave-btn');
+                btn.innerText = `5문제를 푸세요`;
+                btn.style.background = "#4a5068";
+                btn.style.color = "#8a90a8";
                 updateUI();
             }
         }
 
-        // --- 고디테일 자연 테마 맵 렌더링 ---
-        function renderGameFrame() {
-            // 예시 사진 느낌의 산뜻한 잔디 평원 베이스
-            ctx.fillStyle = "#6bc15b"; 
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // 잔디결 그리드 도트 장식
-            ctx.fillStyle = "#5fb24f";
-            for (let c = 0; c < MAP_COLS; c++) {
-                for (let r = 0; r < MAP_ROWS; r++) {
-                    if ((c + r) % 3 === 0) {
-                        ctx.fillRect(c * TILE_SIZE + 10, r * TILE_SIZE + 10, 4, 4);
-                        ctx.fillRect(c * TILE_SIZE + 35, r * TILE_SIZE + 25, 3, 3);
-                    }
-                }
-            }
-
-            // 고정 조경물 데코레이션 (나무숲 및 암석)
-            ctx.fillStyle = "#469138"; // 숲 뭉텅이 표현
-            ctx.beginPath();
-            ctx.arc(120, 150, 25, 0, Math.PI*2); ctx.arc(140, 160, 20, 0, Math.PI*2);
-            ctx.arc(680, 280, 30, 0, Math.PI*2); ctx.arc(710, 300, 25, 0, Math.PI*2);
-            ctx.fill();
-
-            // 바위 덩어리 렌더링
-            ctx.fillStyle = "#a8a8a8";
-            ctx.beginPath();
-            ctx.moveTo(350, 110); ctx.lineTo(370, 100); ctx.lineTo(385, 115); ctx.lineTo(360, 125);
-            ctx.fill();
-
-            // 부드러운 오솔길 흙길 라인 브러싱
-            ctx.strokeStyle = "#e9cc8b"; 
-            ctx.lineWidth = 34;
-            ctx.lineCap = "round"; ctx.lineJoin = "round";
-            ctx.beginPath();
-            ctx.moveTo(activePathPoints[0].x, activePathPoints[0].y);
-            for (let i = 1; i < activePathPoints.length; i++) {
-                ctx.lineTo(activePathPoints[i].x, activePathPoints[i].y);
-            }
-            ctx.stroke();
-
-            // 길 안쪽 경계선 마감
-            ctx.strokeStyle = "#dfbf73";
-            ctx.lineWidth = 28;
-            ctx.stroke();
-
-            // 선택 범위 링 레이어
-            if (gameState.selectedPlacedTower) {
-                ctx.fillStyle = "rgba(92, 219, 149, 0.15)";
-                ctx.beginPath();
-                ctx.arc(gameState.selectedPlacedTower.x, gameState.selectedPlacedTower.y, gameState.selectedPlacedTower.range, 0, Math.PI*2);
-                ctx.fill();
-                ctx.strokeStyle = "#5cdb95";
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
-            }
-
-            // 수호 타워 드로잉 (Pulse 팅김 모션 탑재)
-            gameState.towers.forEach(t => {
-                let size = 18 * t.pulseScale;
-                ctx.fillStyle = t.spec.color;
-                ctx.beginPath();
-                ctx.arc(t.x, t.y, size, 0, Math.PI*2);
-                ctx.fill();
-                
-                ctx.strokeStyle = t.level === 5 ? "#ffd700" : "#ffffff";
-                ctx.lineWidth = t.level === 5 ? 3 : 2;
-                ctx.stroke();
-
-                ctx.fillStyle = "#ffffff";
-                ctx.font = `${14 * t.pulseScale}px Arial`;
-                ctx.textAlign = "center"; ctx.textBaseline = "middle";
-                ctx.fillText(t.spec.emoji, t.x, t.y - 2);
-
-                ctx.fillStyle = "rgba(0,0,0,0.6)";
-                ctx.fillRect(t.x - 18, t.y + 12, 36, 10);
-                ctx.fillStyle = "#ffffff";
-                ctx.font = "bold 9px sans-serif";
-                ctx.fillText(`Lv.${t.level}`, t.x, t.y + 17);
-            });
-
-            // 어휘 요괴 드로잉 (이모지 전면 적용 및 징벌선 연출)
-            gameState.monsters.forEach(m => {
-                ctx.font = `${m.isBoss ? 38 : 22}px sans-serif`;
-                ctx.textAlign = "center"; ctx.textBaseline = "middle";
-                ctx.fillText(m.emoji, m.x, m.y);
-
-                // 약점 안내 텍스트 태그
-                ctx.fillStyle = "#ffffff";
-                ctx.font = "bold 10px Malgun Gothic";
-                ctx.shadowColor = "black"; ctx.shadowBlur = 4;
-                ctx.fillText(`약점:${m.weakness}`, m.x, m.y - m.size - 13);
-                ctx.shadowBlur = 0; 
-
-                // 체력 상태 바
-                let barW = m.size * 2.2;
-                let barH = 5;
-                ctx.fillStyle = "rgba(0,0,0,0.6)";
-                ctx.fillRect(m.x - barW/2, m.y - m.size - 6, barW, barH);
-
-                let healthRatio = Math.max(0, m.hp / m.maxHp);
-                ctx.fillStyle = m.isBoss ? "#ff1e56" : "#5cdb95";
-                ctx.fillRect(m.x - barW/2, m.y - m.size - 6, barW * healthRatio, barH);
-            });
-
-            // 💥 펑펑 터지는 충돌 이펙트 실시간 페인팅
-            gameState.explosions.forEach(exp => {
-                ctx.fillStyle = exp.color;
-                ctx.beginPath();
-                ctx.arc(exp.x, exp.y, exp.radius * (1 - exp.life/12), 0, Math.PI*2);
-                ctx.fill();
-            });
-
-            // 투사체 페인팅
-            gameState.projectiles.forEach(p => {
-                ctx.fillStyle = p.type === 'ice' ? '#00bcd4' : p.type === 'bomb' ? '#ff9800' : '#ffffff';
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.type === 'bomb' ? 6 : 4, 0, Math.PI*2);
-                ctx.fill();
-            });
-        }
-
+        // --- UI RE-SINK LAYER ---
         function updateUI() {
-            document.getElementById('stat-life').innerText = gameState.life;
-            document.getElementById('stat-gold').innerText = gameState.gold;
-            document.getElementById('stat-wave').innerText = gameState.wave;
-            document.getElementById('stat-combo').innerText = gameState.combo;
-            document.getElementById('stat-solved').innerText = `${gameState.solvedCount}/5`;
+            document.getElementById('stat-life').innerText = state.life;
+            document.getElementById('stat-gold').innerText = state.gold;
+            document.getElementById('stat-wave').innerText = state.wave;
+            document.getElementById('stat-combo').innerText = state.combo;
+            document.getElementById('stat-solved').innerText = `${state.solvedCount}/5`;
 
-            document.querySelectorAll('.shop-card').forEach(card => card.classList.remove('selected'));
-            if (gameState.selectedShopItem) {
-                document.getElementById(`shop-${gameState.selectedShopItem}`).classList.add('selected');
+            document.querySelectorAll('.shop-card').forEach(c => c.classList.remove('selected'));
+            if (state.selectedShopItem) {
+                document.getElementById(`shop-${state.selectedShopItem}`).classList.add('selected');
             }
 
-            const detailPanel = document.getElementById('detail-panel');
-            if (gameState.selectedPlacedTower) {
-                const t = gameState.selectedPlacedTower;
-                detailPanel.style.display = 'flex';
+            const dp = document.getElementById('detail-panel');
+            if (state.selectedPlacedTower) {
+                const t = state.selectedPlacedTower;
+                dp.style.display = 'flex';
                 document.getElementById('detail-name').innerText = `${t.spec.name} (Lv.${t.level})`;
                 document.getElementById('detail-stats').innerText = `공격력: ${t.damage} / 사거리: ${t.range}`;
                 
                 const upBtn = document.getElementById('upgrade-btn');
                 if (t.level < 5) {
-                    const cost = UPGRADE_COSTS[t.level - 1];
-                    upBtn.innerText = `업그레이드 (${cost}G)`;
+                    upBtn.innerText = `업그레이드 (${UPGRADE_COSTS[t.level - 1]}G)`;
                     upBtn.disabled = false;
                 } else {
-                    upBtn.innerText = `최고 단계 연구 완료 (MAX)`;
+                    upBtn.innerText = `최고 진화 완료 (MAX)`;
                     upBtn.disabled = true;
                 }
             } else {
-                detailPanel.style.display = 'none';
+                dp.style.display = 'none';
             }
         }
 
         function endGame() {
             document.getElementById('game-screen').classList.remove('active');
-            document.getElementById('gameover-summary').innerText = `어휘 요괴들에게 기지를 내주었습니다. 최종 달성: ${gameState.wave} 웨이브`;
+            document.getElementById('gameover-summary').innerText = `어휘 요괴 침공 방어 실패... 최종 ${state.wave}웨이브 도달`;
             document.getElementById('gameover-overlay').style.display = 'flex';
         }
     </script>
